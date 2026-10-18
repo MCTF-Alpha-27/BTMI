@@ -1,0 +1,19 @@
+{
+    "type":  "minecraft:crafting_shapeless",
+    "category":  "misc",
+    "ingredients":  [
+                        {
+                            "item":  "btmi:black_steel_ingot"
+                        },
+                        {
+                            "item":  "minecraft:redstone"
+                        },
+                        {
+                            "item":  "minecraft:blaze_powder"
+                        }
+                    ],
+    "result":  {
+                   "id":  "btmi:crimson_alloy",
+                   "count":  1
+               }
+}

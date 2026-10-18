@@ -1,0 +1,21 @@
+{
+    "type":  "minecraft:crafting_shaped",
+    "category":  "equipment",
+    "pattern":  [
+                    " B ",
+                    "BEB",
+                    " B "
+                ],
+    "key":  {
+                "B":  {
+                          "item":  "btmi:black_steel_ingot"
+                      },
+                "E":  {
+                          "item":  "btmi:energy_core"
+                      }
+            },
+    "result":  {
+                   "id":  "btmi:obelisk",
+                   "count":  1
+               }
+}

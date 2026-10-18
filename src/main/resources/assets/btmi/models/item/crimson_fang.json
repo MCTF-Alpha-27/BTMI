@@ -1,0 +1,16 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "item/generated",
+    "textures": {
+      "layer0": "btmi:item/crimson_fang"
+    }
+  },
+  "perspectives": {
+    "thirdperson_righthand": { "parent": "btmi:item/crimson_fang_3d" },
+    "thirdperson_lefthand": { "parent": "btmi:item/crimson_fang_3d" },
+    "firstperson_righthand": { "parent": "btmi:item/crimson_fang_3d" },
+    "firstperson_lefthand": { "parent": "btmi:item/crimson_fang_3d" }
+  }
+}

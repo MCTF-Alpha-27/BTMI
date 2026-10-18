@@ -1,0 +1,13 @@
+{
+  "category": "RANGED",
+  "usable_in_offhand": false,
+  "collider": {
+    "number": 3,
+    "center": [0.0, 0.0, -0.6],
+    "size": [0.4, 0.4, 1.4]
+  },
+  "styles": {
+    "default": "one_hand",
+    "cases": []
+  }
+}

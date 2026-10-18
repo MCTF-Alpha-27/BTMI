@@ -1,0 +1,14 @@
+{
+  "type": "btmi:crimson_fang",
+  "attributes": {
+    "common": {
+      "impact": 1.0,
+      "max_strikes": 1
+    }
+  },
+  "collider": {
+    "number": 3,
+    "center": [0.0, 0.0, -0.7],
+    "size": [0.3, 0.3, 1.2]
+  }
+}

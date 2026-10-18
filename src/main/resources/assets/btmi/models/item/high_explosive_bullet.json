@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "btmi:item/high_explosive_bullet"
+  }
+}

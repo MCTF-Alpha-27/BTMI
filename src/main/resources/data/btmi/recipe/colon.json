@@ -1,0 +1,24 @@
+{
+    "type":  "minecraft:crafting_shaped",
+    "category":  "equipment",
+    "pattern":  [
+                    "  C",
+                    " BE",
+                    "C  "
+                ],
+    "key":  {
+                "C":  {
+                          "item":  "btmi:crimson_alloy"
+                      },
+                "B":  {
+                          "item":  "btmi:black_steel_ingot"
+                      },
+                "E":  {
+                          "item":  "btmi:energy_core"
+                      }
+            },
+    "result":  {
+                   "id":  "btmi:colon",
+                   "count":  1
+               }
+}

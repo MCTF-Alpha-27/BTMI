@@ -1,0 +1,22 @@
+{
+    "type":  "minecraft:crafting_shapeless",
+    "category":  "misc",
+    "ingredients":  [
+                        {
+                            "item":  "minecraft:gunpowder"
+                        },
+                        {
+                            "item":  "minecraft:gunpowder"
+                        },
+                        {
+                            "item":  "minecraft:iron_nugget"
+                        },
+                        {
+                            "item":  "minecraft:tnt"
+                        }
+                    ],
+    "result":  {
+                   "id":  "btmi:high_explosive_bullet",
+                   "count":  8
+               }
+}

@@ -1,0 +1,22 @@
+{
+    "type":  "minecraft:crafting_shapeless",
+    "category":  "misc",
+    "ingredients":  [
+                        {
+                            "item":  "minecraft:gunpowder"
+                        },
+                        {
+                            "item":  "minecraft:gunpowder"
+                        },
+                        {
+                            "item":  "minecraft:iron_nugget"
+                        },
+                        {
+                            "item":  "minecraft:redstone"
+                        }
+                    ],
+    "result":  {
+                   "id":  "btmi:paralysis_bullet",
+                   "count":  8
+               }
+}

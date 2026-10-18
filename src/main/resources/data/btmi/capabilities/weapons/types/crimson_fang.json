@@ -1,0 +1,19 @@
+{
+  "category": "RANGED",
+  "usable_in_offhand": false,
+  "collider": {
+    "number": 3,
+    "center": [0.0, 0.0, -0.7],
+    "size": [0.3, 0.3, 1.2]
+  },
+  "styles": {
+    "default": "two_hand",
+    "cases": []
+  },
+  "livingmotion_modifier": {
+    "two_hand": {
+      "idle": "epicfight:biped/living/hold_crossbow",
+      "confront": "epicfight:biped/living/hold_crossbow"
+    }
+  }
+}

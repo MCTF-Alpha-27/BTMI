@@ -1,0 +1,29 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+// ---------------------------------------------------------------------------
+// Network workaround
+// ---------------------------------------------------------------------------
+// In some regions `maven.neoforged.net` is unreachable (DNS poisoned). Forge
+// hosts an up-to-date mirror of the same Maven repository, so any repository
+// pointing at `maven.neoforged.net` is rewritten to `neoforged.forgecdn.net`.
+//
+// If you can reach maven.neoforged.net directly (VPN/proxy), delete this block.
+// ---------------------------------------------------------------------------
+gradle.allprojects {
+    repositories.whenObjectAdded { repo ->
+        if (repo instanceof org.gradle.api.artifacts.repositories.MavenArtifactRepository) {
+            def urlString = repo.url.toString()
+            if (urlString.contains('maven.neoforged.net')) {
+                repo.url = urlString.replace('https://maven.neoforged.net', 'https://neoforged.forgecdn.net')
+            }
+        }
+    }
+}
