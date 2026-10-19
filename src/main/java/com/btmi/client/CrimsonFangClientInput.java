@@ -12,9 +12,6 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-/**
- * 猩红之牙的客户端输入：按住左键持续开火（服务端按模式控制射速）。
- */
 @EventBusSubscriber(modid = BTMI.MODID, value = Dist.CLIENT)
 public final class CrimsonFangClientInput {
     private CrimsonFangClientInput() {

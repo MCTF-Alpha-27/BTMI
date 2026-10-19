@@ -2,12 +2,14 @@ package com.btmi.item;
 
 import java.util.List;
 
+import com.btmi.BTMI;
 import com.btmi.Config;
 import com.btmi.network.ShakePayload;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -32,8 +34,7 @@ public final class SmashHandler {
     private SmashHandler() {
     }
 
-    public static void perform(ServerLevel level, Player player, ItemStack stack, int chargeTicks) {
-        int minTicks = Config.MIN_CHARGE_TICKS.get();
+    public static void perform(ServerLevel level, Player player, ItemStack stack, int chargeTicks) {        int minTicks = Config.MIN_CHARGE_TICKS.get();
         int maxTicks = Math.max(minTicks + 1, Config.MAX_CHARGE_TICKS.get());
         // 最小蓄力时为 0.0，满蓄力（或更久）时为 1.0
         float intensity = Mth.clamp((chargeTicks - minTicks) / (float) (maxTicks - minTicks), 0.0F, 1.0F);
@@ -60,6 +61,112 @@ public final class SmashHandler {
 
         player.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);
         stack.hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+    }
+
+    // ------------------------------------------------------------------
+    // 全垒打
+    // ------------------------------------------------------------------
+
+    public static void homeRun(ServerLevel level, ServerPlayer player) {
+        ItemStack stack = player.getMainHandItem();
+        if (!stack.is(BTMI.EXCLAMATION_MARK.get()) || player.getCooldowns().isOnCooldown(stack.getItem())) {
+            return;
+        }
+        player.getCooldowns().addCooldown(stack.getItem(), Config.EXCLAMATION_HOMERUN_COOLDOWN.get());
+
+        Vec3 eye = player.getEyePosition();
+        Vec3 look = player.getLookAngle();
+        Vec3 flatLook = new Vec3(look.x, 0.0D, look.z);
+        if (flatLook.lengthSqr() < 1.0E-6D) {
+            flatLook = new Vec3(0.0D, 0.0D, 1.0D);
+        }
+        flatLook = flatLook.normalize();
+
+        double radius = Config.EXCLAMATION_HOMERUN_RADIUS.get();
+        double cosHalf = Math.cos(Math.toRadians(80.0D));
+        float damage = Config.EXCLAMATION_HOMERUN_DAMAGE.get().floatValue();
+        double knockback = Config.EXCLAMATION_HOMERUN_KNOCKBACK.get();
+
+        AABB area = player.getBoundingBox().inflate(radius, 3.0D, radius);
+        for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area,
+                entity -> entity != player && entity.isAlive())) {
+            Vec3 toTarget = target.getEyePosition().subtract(eye);
+            if (toTarget.length() > radius) {
+                continue;
+            }
+            Vec3 flat = new Vec3(toTarget.x, 0.0D, toTarget.z);
+            if (flat.lengthSqr() < 1.0E-6D) {
+                flat = flatLook;
+            }
+            flat = flat.normalize();
+            if (flat.dot(flatLook) < cosHalf) {
+                continue;
+            }
+
+            target.invulnerableTime = 0;
+            target.hurt(level.damageSources().playerAttack(player), damage);
+            target.push(flat.x * knockback, 1.1D, flat.z * knockback);
+            target.hurtMarked = true;
+            level.sendParticles(ParticleTypes.CRIT, target.getX(), target.getY() + 1.0D, target.getZ(),
+                    16, 0.35D, 0.35D, 0.35D, 0.28D);
+            level.sendParticles(ParticleTypes.SMOKE, target.getX(), target.getY() + 0.8D, target.getZ(),
+                    8, 0.3D, 0.3D, 0.3D, 0.02D);
+        }
+
+        spawnHomeRunEffects(level, player, eye, flatLook, radius);
+    }
+
+    private static void spawnHomeRunEffects(ServerLevel level, ServerPlayer player, Vec3 eye, Vec3 flatLook, double radius) {
+        Vec3 right = new Vec3(-flatLook.z, 0.0D, flatLook.x);
+        Vec3 center = eye.add(0.0D, -0.35D, 0.0D);
+
+        // 三层挥击弧线，外圈更大更亮
+        for (int layer = 0; layer < 3; layer++) {
+            double arcRadius = radius * (0.55D + layer * 0.2D);
+            double yOffset = layer * 0.28D;
+            int points = 36;
+            for (int i = 0; i <= points; i++) {
+                double angle = Math.toRadians(-82.0D + 164.0D * (i / (double) points));
+                Vec3 direction = flatLook.scale(Math.cos(angle)).add(right.scale(Math.sin(angle)));
+                Vec3 point = center.add(direction.scale(arcRadius)).add(0.0D, yOffset, 0.0D);
+                level.sendParticles(ParticleTypes.SWEEP_ATTACK, point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+                if (i % 3 == 0) {
+                    level.sendParticles(ParticleTypes.CRIT, point.x, point.y, point.z,
+                            1, 0.0D, 0.0D, 0.0D, 0.03D);
+                }
+            }
+        }
+
+        // 地面扩散的冲击环
+        for (int ring = 0; ring < 2; ring++) {
+            double ringRadius = 1.8D + ring * 1.4D;
+            for (int i = 0; i < 40; i++) {
+                double angle = i * (Math.PI * 2.0D / 40.0D);
+                level.sendParticles(ring == 0 ? ParticleTypes.CLOUD : ParticleTypes.POOF,
+                        player.getX() + Math.cos(angle) * ringRadius,
+                        player.getY() + 0.12D,
+                        player.getZ() + Math.sin(angle) * ringRadius,
+                        1, 0.0D, 0.02D, 0.0D, 0.01D);
+            }
+        }
+
+        level.sendParticles(ParticleTypes.FLASH, center.x + flatLook.x * 1.2D, center.y, center.z + flatLook.z * 1.2D,
+                1, 0.0D, 0.0D, 0.0D, 0.0D);
+        level.sendParticles(ParticleTypes.SWEEP_ATTACK, center.x + flatLook.x * 2.0D, center.y,
+                center.z + flatLook.z * 2.0D, 6, 0.6D, 0.2D, 0.6D, 0.0D);
+
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.6F, 0.65F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 1.0F, 1.45F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.7F, 1.7F);
+
+        if (Config.SCREEN_SHAKE.get()) {
+            float strength = (float) (Config.SHAKE_STRENGTH.get() * 0.85D);
+            PacketDistributor.sendToPlayersNear(level, null, player.getX(), player.getY(), player.getZ(), 40.0D,
+                    new ShakePayload(player.getX(), player.getY(), player.getZ(), strength, 12));
+        }
     }
 
     private static void damageEntities(ServerLevel level, Player player, Vec3 impact, Vec3 look, float intensity) {

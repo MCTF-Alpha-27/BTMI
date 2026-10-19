@@ -18,12 +18,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-/**
- * 破折号万象投影的传送门。
- *
- * <p>固定停在玩家身后偏上的位置，渲染成一个面向镜头的传送门（见 ProjectionPortalRenderer）。
- * 门打开后按各自错开的节奏，从门里朝玩家当时指向的位置交错发射光球。</p>
- */
 public class ProjectionPortal extends Entity {
     /** 传送门打开的时长 */
     public static final int EMERGE_TICKS = 14;

@@ -20,12 +20,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-/**
- * 破折号的万象投影。
- *
- * <p>用破折号命中敌人积累层数，满 10 层后按键触发：
- * 在身后偏上生成一排分身，从传送门里缓缓伸出，随后交错向准星指向的位置射击。</p>
- */
 public final class DashProjectionSkill {
     public static final int REQUIRED_HITS = 10;
 

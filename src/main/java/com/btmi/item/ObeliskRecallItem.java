@@ -73,5 +73,9 @@ public class ObeliskRecallItem extends Item {
         tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.tooltip2").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.tooltip3",
                 Component.keybind("key.btmi.obelisk_detonate")).withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.tooltip4",
+                Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.lore")
+                .withStyle(ChatFormatting.DARK_RED));
     }
 }

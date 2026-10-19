@@ -143,5 +143,7 @@ public class DashItem extends Item {
         tooltipComponents.add(Component.translatable("item.btmi.dash.tooltip3").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("item.btmi.dash.tooltip4",
                 Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("item.btmi.dash.lore")
+                .withStyle(ChatFormatting.DARK_RED));
     }
 }

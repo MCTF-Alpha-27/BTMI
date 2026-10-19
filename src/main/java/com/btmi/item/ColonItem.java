@@ -39,5 +39,9 @@ public class ColonItem extends Item {
         tooltipComponents.add(Component.translatable("item.btmi.colon.tooltip3",
                 Component.keybind("key.btmi.ammo_wheel")).withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("item.btmi.colon.tooltip4").withStyle(ChatFormatting.DARK_GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.colon.tooltip5",
+                Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("item.btmi.colon.lore")
+                .withStyle(ChatFormatting.DARK_RED));
     }
 }

@@ -16,9 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-/**
- * 激光光束渲染：沿射线画 3 个滚转不同的发光面片，形成有体积感的光柱。
- */
 public class LaserBeamRenderer extends EntityRenderer<LaserBeam> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "textures/entity/laser_beam.png");

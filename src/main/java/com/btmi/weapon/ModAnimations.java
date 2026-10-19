@@ -17,6 +17,7 @@ import yesman.epicfight.gameasset.Armatures;
 public final class ModAnimations {
     public static AnimationManager.AnimationAccessor<StaticAnimation> COLON_HOLD;
     public static AnimationManager.AnimationAccessor<StaticAnimation> COLON_SHOT;
+    public static AnimationManager.AnimationAccessor<StaticAnimation> COLON_FAN;
     public static AnimationManager.AnimationAccessor<StaticAnimation> DASH_SHOT;
 
     private ModAnimations() {
@@ -34,6 +35,9 @@ public final class ModAnimations {
                 (accessor) -> new StaticAnimation(true, accessor, Armatures.BIPED));
         // 开火：一次性后坐
         COLON_SHOT = builder.nextAccessor("biped/combat/colon_shot",
+                (accessor) -> new StaticAnimation(false, accessor, Armatures.BIPED));
+        // 六发齐射：保持举枪姿态，连续后坐六次
+        COLON_FAN = builder.nextAccessor("biped/combat/colon_fan",
                 (accessor) -> new StaticAnimation(false, accessor, Armatures.BIPED));
         // 破折号开火：双手前伸瞄准 + 后坐
         DASH_SHOT = builder.nextAccessor("biped/combat/dash_shot",

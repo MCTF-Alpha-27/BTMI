@@ -13,6 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ColonActionPayload(int action, int slot) implements CustomPacketPayload {
     public static final int ACTION_FIRE = 0;
     public static final int ACTION_SELECT = 1;
+    public static final int ACTION_FAN = 2;
 
     public static final CustomPacketPayload.Type<ColonActionPayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "colon_action"));
@@ -34,6 +35,8 @@ public record ColonActionPayload(int action, int slot) implements CustomPacketPa
             if (context.player() instanceof ServerPlayer player) {
                 if (payload.action() == ACTION_FIRE) {
                     ColonHandler.fire(player);
+                } else if (payload.action() == ACTION_FAN) {
+                    ColonHandler.fan(player);
                 } else {
                     ColonHandler.select(player, payload.slot());
                 }

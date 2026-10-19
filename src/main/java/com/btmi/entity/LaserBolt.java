@@ -2,9 +2,11 @@ package com.btmi.entity;
 
 import com.btmi.BTMI;
 import com.btmi.Config;
+import com.btmi.item.ObeliskHandler;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -54,7 +56,12 @@ public class LaserBolt extends ThrowableItemProjectile {
         super.onHitEntity(result);
         Entity target = result.getEntity();
         Entity owner = this.getOwner();
-        target.hurt(this.damageSources().thrown(this, owner), Config.OBELISK_LASER_DAMAGE.get().floatValue());
+        float damage = Config.OBELISK_LASER_DAMAGE.get().floatValue();
+        if (target instanceof LivingEntity living && owner instanceof ServerPlayer serverPlayer
+                && ObeliskHandler.isJudged(living) && ObeliskHandler.holdsObeliskLaser(serverPlayer)) {
+            damage *= 1.0F + Config.OBELISK_KNELL_MARK_BONUS.get().floatValue();
+        }
+        target.hurt(this.damageSources().thrown(this, owner), damage);
         if (owner instanceof LivingEntity livingOwner) {
             livingOwner.setLastHurtMob(target);
         }

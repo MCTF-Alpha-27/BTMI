@@ -121,6 +121,10 @@ public class ExclamationMarkItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable("item.btmi.exclamation_mark.tooltip").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("item.btmi.exclamation_mark.tooltip2").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.exclamation_mark.tooltip3",
+                Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("item.btmi.exclamation_mark.lore")
+                .withStyle(ChatFormatting.DARK_RED));
     }
 
     @Override

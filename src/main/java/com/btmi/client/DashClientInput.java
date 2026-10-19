@@ -1,8 +1,12 @@
 package com.btmi.client;
 
 import com.btmi.BTMI;
+import com.btmi.network.ColonActionPayload;
 import com.btmi.network.CrimsonFangPayload;
+import com.btmi.network.ExclamationPayload;
+import com.btmi.network.FlameCapePayload;
 import com.btmi.network.DashActionPayload;
+import com.btmi.network.ObeliskActionPayload;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
@@ -40,6 +44,23 @@ public final class DashClientInput {
 
         // 武器技能键（H）
         boolean holdingFang = minecraft.player.getMainHandItem().is(BTMI.CRIMSON_FANG.get());
+        boolean holdingExclamation = minecraft.player.getMainHandItem().is(BTMI.EXCLAMATION_MARK.get());
+        boolean holdingColon = minecraft.player.getMainHandItem().is(BTMI.COLON.get())
+                || minecraft.player.getOffhandItem().is(BTMI.COLON.get());
+        boolean holdingObelisk = minecraft.player.getMainHandItem().is(BTMI.OBELISK.get())
+                || minecraft.player.getMainHandItem().is(BTMI.OBELISK_RECALL.get())
+                || minecraft.player.getOffhandItem().is(BTMI.OBELISK.get())
+                || minecraft.player.getOffhandItem().is(BTMI.OBELISK_RECALL.get());
+        boolean wearingCape = minecraft.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST)
+                .is(BTMI.FLAME_CAPE.get());
+
+        // 蝴蝶出击：单独按键，避免和攻击动作冲突
+        while (ModKeyMappings.BUTTERFLY_STRIKE.consumeClick()) {
+            if (minecraft.screen == null && wearingCape) {
+                PacketDistributor.sendToServer(new FlameCapePayload(FlameCapePayload.ACTION_STRIKE));
+                DashClientAnimations.playPointGesture(minecraft.player);
+            }
+        }
         while (ModKeyMappings.WEAPON_SKILL.consumeClick()) {
             if (minecraft.screen != null) {
                 continue;
@@ -49,6 +70,16 @@ public final class DashClientInput {
             } else if (holdingFang) {
                 PacketDistributor.sendToServer(new CrimsonFangPayload(CrimsonFangPayload.ACTION_RING));
                 DashClientAnimations.playWeaponSpin(minecraft.player);
+            } else if (holdingExclamation) {
+                PacketDistributor.sendToServer(new ExclamationPayload(ExclamationPayload.ACTION_HOMERUN));
+                DashClientAnimations.playHomeRun(minecraft.player);
+            } else if (holdingColon) {
+                PacketDistributor.sendToServer(new ColonActionPayload(ColonActionPayload.ACTION_FAN, 0));
+            } else if (holdingObelisk) {
+                PacketDistributor.sendToServer(new ObeliskActionPayload(0, ObeliskActionPayload.ACTION_KNELL));
+                DashClientAnimations.playPointGesture(minecraft.player);
+            } else if (wearingCape) {
+                PacketDistributor.sendToServer(new FlameCapePayload(FlameCapePayload.ACTION_SUMMON));
             }
         }
 

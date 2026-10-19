@@ -18,9 +18,6 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-/**
- * 子弹渲染器。
- */
 public class ColonBulletRenderer extends EntityRenderer<ColonBullet> {
     private static final ResourceLocation PLACEHOLDER =
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");

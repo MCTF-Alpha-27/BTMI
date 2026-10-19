@@ -71,5 +71,9 @@ public class ObeliskItem extends Item {
         tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip1").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip2").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip3").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip4",
+                Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("item.btmi.obelisk.lore")
+                .withStyle(ChatFormatting.DARK_RED));
     }
 }

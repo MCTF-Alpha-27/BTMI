@@ -12,9 +12,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
-/**
- * 破折号万象投影的层数显示
- */
 @EventBusSubscriber(modid = BTMI.MODID, value = Dist.CLIENT)
 public final class DashChargeHud {
     private static final int SEGMENT_WIDTH = 9;

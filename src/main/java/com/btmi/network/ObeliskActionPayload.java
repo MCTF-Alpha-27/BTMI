@@ -13,6 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ObeliskActionPayload(int hand, int action) implements CustomPacketPayload {
     public static final int ACTION_ATTACK = 0;
     public static final int ACTION_DETONATE = 1;
+    public static final int ACTION_KNELL = 2;
 
     public static final CustomPacketPayload.Type<ObeliskActionPayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "obelisk_action"));

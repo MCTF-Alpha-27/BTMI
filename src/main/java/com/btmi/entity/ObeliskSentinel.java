@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
@@ -65,6 +66,12 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
             this.ownerUUID = compound.getUUID("Owner");
         }
         this.ownerHand = compound.getInt("Hand");
+    }
+
+    @Override
+    public boolean save(CompoundTag compound) {
+        // 悬浮实体是召唤物，不写入存档，避免重新进游戏后残留
+        return false;
     }
 
     @Override
@@ -161,8 +168,14 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
     private void tickHover(ServerLevel level, Player owner) {
         this.noPhysics = true;
         if (owner == null || !owner.isAlive()) {
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.8D));
-            this.move(MoverType.SELF, this.getDeltaMovement());
+            // 主人不在线或已死亡：直接消失
+            this.discard();
+            return;
+        }
+        // 手里已经没有召回示亡号了，就不要再留着
+        InteractionHand hand = this.ownerHand == 1 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        if (!owner.getItemInHand(hand).is(BTMI.OBELISK_RECALL.get())) {
+            this.discard();
             return;
         }
 

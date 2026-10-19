@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " C ",
+    "FEF",
+    " C "
+  ],
+  "key": {
+    "C": { "item": "btmi:crimson_alloy" },
+    "F": { "item": "minecraft:blaze_powder" },
+    "E": { "item": "btmi:energy_core" }
+  },
+  "result": {
+    "id": "btmi:flame_cape",
+    "count": 1
+  }
+}

@@ -5,9 +5,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.btmi.BTMI;
+import com.btmi.Config;
 import com.btmi.entity.LaserBeam;
 import com.btmi.entity.LaserBolt;
+import com.btmi.network.ShakePayload;
 
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -29,10 +32,10 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-/**
- * 猩红之牙的服务端逻辑：三种开火模式 + 能量环技能。
- */
+import org.joml.Vector3f;
+
 @EventBusSubscriber(modid = BTMI.MODID)
 public final class CrimsonFangHandler {
     private static final int BURST_COOLDOWN = 4;
@@ -177,6 +180,14 @@ public final class CrimsonFangHandler {
     }
 
     private static void fireShotgun(ServerLevel level, ServerPlayer player, Vec3 muzzle, Vec3 look) {
+        Vec3 right = look.cross(new Vec3(0.0D, 1.0D, 0.0D));
+        if (right.lengthSqr() < 1.0E-6D) {
+            right = new Vec3(1.0D, 0.0D, 0.0D);
+        }
+        right = right.normalize();
+        Vec3 up = right.cross(look).normalize();
+
+        // 锥形命中判定
         AABB area = player.getBoundingBox().inflate(SHOTGUN_RANGE);
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area,
                 entity -> entity != player && entity.isAlive())) {
@@ -187,34 +198,95 @@ public final class CrimsonFangHandler {
             if (toTarget.normalize().dot(look) < SHOTGUN_COS) {
                 continue;
             }
+            target.invulnerableTime = 0;
             target.hurt(level.damageSources().playerAttack(player), SHOTGUN_DAMAGE);
+
+            // 命中反馈：红色电火花与爆闪
+            Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
+            level.sendParticles(ParticleTypes.FLASH, center.x, center.y, center.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            level.sendParticles(ParticleTypes.ELECTRIC_SPARK, center.x, center.y, center.z,
+                    22, 0.35D, 0.45D, 0.35D, 0.28D);
+            level.sendParticles(new DustParticleOptions(new Vector3f(0.62F, 0.03F, 0.08F), 1.5F),
+                    center.x, center.y, center.z, 18, 0.3D, 0.4D, 0.3D, 0.06D);
         }
 
-        // 枪口扇面闪电
-        Vec3 right = look.cross(new Vec3(0.0D, 1.0D, 0.0D));
-        if (right.lengthSqr() < 1.0E-6D) {
-            right = new Vec3(1.0D, 0.0D, 0.0D);
-        }
-        right = right.normalize();
-        Vec3 up = right.cross(look).normalize();
+        // 枪口爆闪、硝烟与猩红粉尘
+        level.sendParticles(ParticleTypes.FLASH, muzzle.x, muzzle.y, muzzle.z, 2, 0.0D, 0.0D, 0.0D, 0.0D);
+        level.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z,
+                28, 0.22D, 0.22D, 0.22D, 0.09D);
+        level.sendParticles(ParticleTypes.FIREWORK, muzzle.x, muzzle.y, muzzle.z,
+                34, 0.32D, 0.32D, 0.32D, 0.2D);
+        level.sendParticles(new DustParticleOptions(new Vector3f(0.6F, 0.02F, 0.07F), 1.9F),
+                muzzle.x, muzzle.y, muzzle.z, 30, 0.28D, 0.28D, 0.28D, 0.14D);
 
-        for (int ray = -4; ray <= 4; ray++) {
-            double spread = ray * 0.10D;
-            for (double d = 0.6D; d < 6.0D; d += 0.45D) {
-                double wobble = Math.sin(d * 2.0D + ray) * 0.12D;
-                Vec3 point = muzzle
-                        .add(look.scale(d))
-                        .add(right.scale(spread * d + wobble))
-                        .add(up.scale(wobble * 0.6D));
-                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.02D);
+        // 枪口前方的冲击圆盘
+        for (int ring = 0; ring < 2; ring++) {
+            double ringRadius = 0.3D + ring * 0.35D;
+            Vec3 ringCenter = muzzle.add(look.scale(0.35D + ring * 0.3D));
+            for (int i = 0; i < 20; i++) {
+                double angle = i * (Math.PI * 2.0D / 20.0D);
+                Vec3 point = ringCenter
+                        .add(right.scale(Math.cos(angle) * ringRadius))
+                        .add(up.scale(Math.sin(angle) * ringRadius));
+                level.sendParticles(ring == 0 ? ParticleTypes.FLASH : ParticleTypes.SWEEP_ATTACK,
+                        point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
         }
 
-        level.sendParticles(ParticleTypes.FLASH, muzzle.x, muzzle.y, muzzle.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        // 五束分叉闪电，铺满整个扇面
+        for (int ray = -2; ray <= 2; ray++) {
+            double spread = ray * 0.28D;
+            double phase = ray * 1.7D;
+            for (int step = 0; step <= 10; step++) {
+                double distance = 0.6D + step * 0.62D;
+                double wobble = Math.sin(distance * 1.5D + phase) * 0.08D
+                        + (level.random.nextDouble() - 0.5D) * 0.09D;
+                Vec3 point = muzzle
+                        .add(look.scale(distance))
+                        .add(right.scale(spread * distance + wobble))
+                        .add(up.scale(wobble * 0.6D + (level.random.nextDouble() - 0.5D) * 0.07D));
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z,
+                        1, 0.01D, 0.01D, 0.01D, 0.01D);
+                if (step % 3 == 0) {
+                    level.sendParticles(ParticleTypes.END_ROD, point.x, point.y, point.z,
+                            1, 0.0D, 0.0D, 0.0D, 0.0D);
+                }
+                if (level.random.nextFloat() < 0.14F) {
+                    Vec3 fork = point
+                            .add(right.scale((level.random.nextDouble() - 0.5D) * 1.2D))
+                            .add(up.scale((level.random.nextDouble() - 0.5D) * 0.8D))
+                            .add(look.scale(0.45D));
+                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK, fork.x, fork.y, fork.z,
+                            2, 0.02D, 0.02D, 0.02D, 0.03D);
+                }
+            }
+        }
+
+        // 扇面内漂浮的猩红雾与硝烟
+        for (int layer = 0; layer < 4; layer++) {
+            double distance = 1.2D + layer * 1.35D;
+            double spread = 0.32D * distance;
+            Vec3 center = muzzle.add(look.scale(distance));
+            level.sendParticles(ParticleTypes.CRIMSON_SPORE, center.x, center.y, center.z,
+                    16, spread, spread * 0.6D, spread, 0.03D);
+            level.sendParticles(ParticleTypes.CLOUD, center.x, center.y, center.z,
+                    6, spread, spread * 0.5D, spread, 0.03D);
+        }
+
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.7F, 1.7F);
+                SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.9F, 1.7F);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.5F, 1.8F);
+                SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.7F, 1.6F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 0.55F, 1.75F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.FIREWORK_ROCKET_BLAST, SoundSource.PLAYERS, 1.0F, 1.3F);
+
+        if (Config.SCREEN_SHAKE.get()) {
+            float strength = (float) (Config.SHAKE_STRENGTH.get() * 0.55D);
+            PacketDistributor.sendToPlayersNear(level, null, player.getX(), player.getY(), player.getZ(), 24.0D,
+                    new ShakePayload(player.getX(), player.getY(), player.getZ(), strength, 8));
+        }
     }
 
     // ------------------------------------------------------------------

@@ -12,12 +12,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-/**
- * 猩红之牙激光模式的纯视觉光束。
- *
- * <p>由服务端在开火瞬间生成，只活 7 tick；渲染成几个交叉的发光面片，
- * 看起来像一条瞬间贯穿的激光，而不是飞行的弹丸。</p>
- */
 public class LaserBeam extends Entity {
     public static final int LIFE_TICKS = 7;
 

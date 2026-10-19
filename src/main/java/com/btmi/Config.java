@@ -50,6 +50,26 @@ public class Config {
             .defineInRange("shakeStrength", 6.0D, 0.0D, 45.0D);
 
     // ------------------------------------------------------------------
+    // 感叹号
+    // ------------------------------------------------------------------
+
+    public static final ModConfigSpec.DoubleValue EXCLAMATION_HOMERUN_DAMAGE = BUILDER
+            .comment("全垒打对扇形范围内每个目标造成的伤害。")
+            .defineInRange("exclamationHomeRunDamage", 26.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue EXCLAMATION_HOMERUN_RADIUS = BUILDER
+            .comment("全垒打的扇形半径（格）。")
+            .defineInRange("exclamationHomeRunRadius", 6.0D, 0.0D, 32.0D);
+
+    public static final ModConfigSpec.DoubleValue EXCLAMATION_HOMERUN_KNOCKBACK = BUILDER
+            .comment("全垒打把目标向外击飞的水平速度。")
+            .defineInRange("exclamationHomeRunKnockback", 2.0D, 0.0D, 20.0D);
+
+    public static final ModConfigSpec.IntValue EXCLAMATION_HOMERUN_COOLDOWN = BUILDER
+            .comment("全垒打的冷却时间（刻）。")
+            .defineInRange("exclamationHomeRunCooldown", 160, 0, 7200);
+
+    // ------------------------------------------------------------------
     // 破折号
     // ------------------------------------------------------------------
 
@@ -105,9 +125,45 @@ public class Config {
             .comment("引爆的爆炸是否破坏方块。")
             .define("obeliskExplosionBreaksBlocks", true);
 
+    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_DAMAGE = BUILDER
+            .comment("丧钟落点中心造成的伤害。")
+            .defineInRange("obeliskKnellDamage", 22.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_ARM_DAMAGE = BUILDER
+            .comment("光之十字四条臂造成的伤害。")
+            .defineInRange("obeliskKnellArmDamage", 12.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_RADIUS = BUILDER
+            .comment("丧钟落点中心的伤害半径（格），十字臂从中心向外延伸。")
+            .defineInRange("obeliskKnellRadius", 3.0D, 0.0D, 32.0D);
+
+    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_ARM_LENGTH = BUILDER
+            .comment("光之十字每条臂的长度（格）。")
+            .defineInRange("obeliskKnellArmLength", 6.0D, 0.0D, 32.0D);
+
+    public static final ModConfigSpec.IntValue OBELISK_KNELL_COOLDOWN = BUILDER
+            .comment("丧钟的冷却时间（刻）。")
+            .defineInRange("obeliskKnellCooldown", 200, 0, 7200);
+
+    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_MARK_BONUS = BUILDER
+            .comment("亡印使激光弹伤害提高的比例（0.5 表示 +50%）。")
+            .defineInRange("obeliskKnellMarkBonus", 0.5D, 0.0D, 10.0D);
+
     // ------------------------------------------------------------------
     // 冒号
     // ------------------------------------------------------------------
+
+    public static final ModConfigSpec.IntValue COLON_FAN_COOLDOWN = BUILDER
+            .comment("六发齐射的冷却时间（刻）。")
+            .defineInRange("colonFanCooldown", 200, 0, 7200);
+
+    public static final ModConfigSpec.IntValue COLON_FAN_INTERVAL = BUILDER
+            .comment("六发齐射时每两发之间的间隔（刻）。")
+            .defineInRange("colonFanInterval", 2, 1, 40);
+
+    public static final ModConfigSpec.DoubleValue COLON_FAN_SPREAD = BUILDER
+            .comment("六发齐射时每发额外增加的最大散布角（弧度）。")
+            .defineInRange("colonFanSpread", 0.035D, 0.0D, 1.0D);
 
     public static final ModConfigSpec.DoubleValue COLON_BULLET_DAMAGE = BUILDER
             .comment("普通子弹命中的基础伤害。")

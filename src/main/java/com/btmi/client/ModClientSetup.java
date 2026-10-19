@@ -28,9 +28,11 @@ public final class ModClientSetup {
         event.registerEntityRenderer(BTMI.LASER_BOLT_ENTITY.get(), LaserBoltRenderer::new);
         event.registerEntityRenderer(BTMI.LASER_BEAM.get(), LaserBeamRenderer::new);
         event.registerEntityRenderer(BTMI.PROJECTION_PORTAL.get(), ProjectionPortalRenderer::new);
+        event.registerEntityRenderer(BTMI.FLAME_BUTTERFLY.get(), FlameButterflyRenderer::new);
         event.registerEntityRenderer(BTMI.COLON_BULLET.get(),
                 context -> new ColonBulletRenderer(context, 0.35F));
     }
+
 
     @SubscribeEvent
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {

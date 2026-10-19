@@ -18,11 +18,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 
-/**
- * 猩红之牙：黑底红纹的短管步枪。
- *
- * <p>左键开火，右键切换开火模式（连发 / 激光 / 霰弹），H 键放能量环。</p>
- */
 public class CrimsonFangItem extends Item {
     public static final int MODE_BURST = 0;
     public static final int MODE_LASER = 1;
@@ -71,5 +66,7 @@ public class CrimsonFangItem extends Item {
         tooltip.add(Component.translatable("item.btmi.crimson_fang.tooltip3").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.btmi.crimson_fang.mode",
                 Component.translatable(CrimsonFangHandler.modeName(mode(stack)))).withStyle(ChatFormatting.DARK_RED));
+        tooltip.add(Component.translatable("item.btmi.crimson_fang.lore")
+                .withStyle(ChatFormatting.DARK_RED));
     }
 }

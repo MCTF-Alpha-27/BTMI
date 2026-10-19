@@ -1,10 +1,12 @@
 package com.btmi;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
 import com.btmi.entity.ColonBullet;
+import com.btmi.entity.FlameButterfly;
 import com.btmi.entity.LaserBeam;
 import com.btmi.entity.LaserBolt;
 import com.btmi.entity.LightOrb;
@@ -15,6 +17,7 @@ import com.btmi.item.ColonItem;
 import com.btmi.item.CrimsonFangItem;
 import com.btmi.item.DashItem;
 import com.btmi.item.ExclamationMarkItem;
+import com.btmi.item.FlameCapeItem;
 import com.btmi.item.ObeliskItem;
 import com.btmi.item.ObeliskRecallItem;
 import com.btmi.menu.ColonMenu;
@@ -26,13 +29,18 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -96,6 +104,35 @@ public class BTMI {
                     .rarity(Rarity.EPIC)
                     .fireResistant()
                     .stacksTo(1)));
+
+    // ------------------------------------------------------------------
+    // 烈焰蝶
+    // ------------------------------------------------------------------
+
+    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS =
+            DeferredRegister.create(Registries.ARMOR_MATERIAL, MODID);
+
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> FLAME_CAPE_MATERIAL = ARMOR_MATERIALS.register(
+            "flame_cape",
+            () -> new ArmorMaterial(
+                    Map.of(
+                            ArmorItem.Type.HELMET, 3,
+                            ArmorItem.Type.CHESTPLATE, 7,
+                            ArmorItem.Type.LEGGINGS, 5,
+                            ArmorItem.Type.BOOTS, 3),
+                    18,
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(Items.BLAZE_POWDER),
+                    List.of(new ArmorMaterial.Layer(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, "flame_butterfly"))),
+                    2.0F,
+                    0.05F));
+
+    public static final DeferredItem<FlameCapeItem> FLAME_CAPE = ITEMS.register("flame_cape",
+            () -> new FlameCapeItem(FLAME_CAPE_MATERIAL, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties()
+                            .durability(ArmorItem.Type.CHESTPLATE.getDurability(33))
+                            .rarity(Rarity.EPIC)
+                            .fireResistant()));
 
     // ------------------------------------------------------------------
     // 材料
@@ -223,6 +260,13 @@ public class BTMI {
                     .updateInterval(1)
                     .build("laser_bolt"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<FlameButterfly>> FLAME_BUTTERFLY = ENTITY_TYPES.register(
+            "flame_butterfly",
+            () -> EntityType.Builder.<FlameButterfly>of(FlameButterfly::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("flame_butterfly"));
     public static final DeferredHolder<EntityType<?>, EntityType<LaserBeam>> LASER_BEAM = ENTITY_TYPES.register(
             "laser_beam",
             () -> EntityType.Builder.<LaserBeam>of(LaserBeam::new, MobCategory.MISC)
@@ -253,6 +297,7 @@ public class BTMI {
                     .icon(() -> CRIMSON_FANG.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(CRIMSON_FANG.get());
+                        output.accept(FLAME_CAPE.get());
                         output.accept(BLACK_STEEL_INGOT.get());
                         output.accept(CRIMSON_ALLOY.get());
                         output.accept(ENERGY_CORE.get());
@@ -268,6 +313,7 @@ public class BTMI {
         ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         ENTITY_TYPES.register(modEventBus);
+        ARMOR_MATERIALS.register(modEventBus);
         DATA_COMPONENTS.register(modEventBus);
         MENU_TYPES.register(modEventBus);
 

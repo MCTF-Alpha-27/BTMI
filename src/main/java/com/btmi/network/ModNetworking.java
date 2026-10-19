@@ -21,8 +21,12 @@ public final class ModNetworking {
         // 服务端 -> 客户端：破折号万象投影层数
         registrar.playToClient(DashChargePayload.TYPE, DashChargePayload.STREAM_CODEC, DashChargePayload::handle);
         registrar.playToServer(DashActionPayload.TYPE, DashActionPayload.STREAM_CODEC, DashActionPayload::handle);
+        // 客户端 -> 服务端：感叹号的技能
+        registrar.playToServer(ExclamationPayload.TYPE, ExclamationPayload.STREAM_CODEC, ExclamationPayload::handle);
         // 客户端 -> 服务端：猩红之牙的开火与技能
         registrar.playToServer(CrimsonFangPayload.TYPE, CrimsonFangPayload.STREAM_CODEC, CrimsonFangPayload::handle);
+        // 客户端 -> 服务端：烈焰蝶技能
+        registrar.playToServer(FlameCapePayload.TYPE, FlameCapePayload.STREAM_CODEC, FlameCapePayload::handle);
         // 客户端 -> 服务端：示亡号的按键动作
         registrar.playToServer(ObeliskActionPayload.TYPE, ObeliskActionPayload.STREAM_CODEC, ObeliskActionPayload::handle);
         // 客户端 -> 服务端：冒号的发射与选弹

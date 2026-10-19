@@ -35,6 +35,13 @@ public final class ModKeyMappings {
             GLFW.GLFW_KEY_H,
             "key.categories.btmi");
 
+    public static final KeyMapping BUTTERFLY_STRIKE = new KeyMapping(
+            "key.btmi.butterfly_strike",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_J,
+            "key.categories.btmi");
+
     private ModKeyMappings() {
     }
 
@@ -43,5 +50,6 @@ public final class ModKeyMappings {
         event.register(DETONATE_OBELISK);
         event.register(AMMO_WHEEL);
         event.register(WEAPON_SKILL);
+        event.register(BUTTERFLY_STRIKE);
     }
 }
