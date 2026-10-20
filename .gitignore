@@ -38,3 +38,10 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+
+### 本地临时脚本 / 产物 ###
+/*.mjs
+*.bak
+
+### 本地依赖目录###
+/libs/
