@@ -1,8 +1,10 @@
 package com.btmi.client;
 
 import com.btmi.BTMI;
+import com.btmi.item.ColonAmmo;
 import com.btmi.network.ColonActionPayload;
 import com.btmi.network.CrimsonFangPayload;
+import com.btmi.network.DualWeaponPayload;
 import com.btmi.network.ExclamationPayload;
 import com.btmi.network.FlameCapePayload;
 import com.btmi.network.DashActionPayload;
@@ -12,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -45,6 +48,12 @@ public final class DashClientInput {
         // 武器技能键（H）
         boolean holdingFang = minecraft.player.getMainHandItem().is(BTMI.CRIMSON_FANG.get());
         boolean holdingExclamation = minecraft.player.getMainHandItem().is(BTMI.EXCLAMATION_MARK.get());
+        boolean holdingDual = minecraft.player.getMainHandItem().is(BTMI.SLASH.get())
+                && minecraft.player.getOffhandItem().is(BTMI.EQUAL_SIGN.get());
+        boolean holdingAxe = minecraft.player.getMainHandItem().is(BTMI.EQUAL_SIGN.get())
+                || minecraft.player.getOffhandItem().is(BTMI.EQUAL_SIGN.get());
+        boolean holdingSpear = minecraft.player.getMainHandItem().is(BTMI.SLASH.get())
+                || minecraft.player.getOffhandItem().is(BTMI.SLASH.get());
         boolean holdingColon = minecraft.player.getMainHandItem().is(BTMI.COLON.get())
                 || minecraft.player.getOffhandItem().is(BTMI.COLON.get());
         boolean holdingObelisk = minecraft.player.getMainHandItem().is(BTMI.OBELISK.get())
@@ -65,7 +74,13 @@ public final class DashClientInput {
             if (minecraft.screen != null) {
                 continue;
             }
-            if (holdingDash) {
+            if (holdingDual) {
+                PacketDistributor.sendToServer(new DualWeaponPayload(DualWeaponPayload.ACTION_STRIKETHROUGH));
+            } else if (holdingAxe) {
+                PacketDistributor.sendToServer(new DualWeaponPayload(DualWeaponPayload.ACTION_EQUAL_SLASH));
+            } else if (holdingSpear) {
+                PacketDistributor.sendToServer(new DualWeaponPayload(DualWeaponPayload.ACTION_SLASH_THRUST));
+            } else if (holdingDash) {
                 PacketDistributor.sendToServer(new DashActionPayload(DashActionPayload.ACTION_PROJECTION, 0));
             } else if (holdingFang) {
                 PacketDistributor.sendToServer(new CrimsonFangPayload(CrimsonFangPayload.ACTION_RING));
@@ -75,6 +90,16 @@ public final class DashClientInput {
                 DashClientAnimations.playHomeRun(minecraft.player);
             } else if (holdingColon) {
                 PacketDistributor.sendToServer(new ColonActionPayload(ColonActionPayload.ACTION_FAN, 0));
+                ItemStack gun = minecraft.player.getMainHandItem().is(BTMI.COLON.get())
+                        ? minecraft.player.getMainHandItem()
+                        : minecraft.player.getOffhandItem();
+                int loaded = 0;
+                for (ItemStack bullet : ColonAmmo.read(gun)) {
+                    if (!bullet.isEmpty()) {
+                        loaded++;
+                    }
+                }
+                GunFirstPersonHandler.startFan(Math.max(1, loaded) * 2 + 3);
             } else if (holdingObelisk) {
                 PacketDistributor.sendToServer(new ObeliskActionPayload(0, ObeliskActionPayload.ACTION_KNELL));
                 DashClientAnimations.playPointGesture(minecraft.player);

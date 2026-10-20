@@ -7,7 +7,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import yesman.epicfight.api.animation.AnimationManager;
 import yesman.epicfight.api.animation.AnimationManager.AnimationBuilder;
 import yesman.epicfight.api.animation.AnimationManager.AnimationRegistryEvent;
+import yesman.epicfight.api.animation.types.MirroredAnimation;
 import yesman.epicfight.api.animation.types.StaticAnimation;
+import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.Armatures;
 
 // 在代码里注册本模组的动画：这样注册时机早于武器类型解析，
@@ -19,6 +21,8 @@ public final class ModAnimations {
     public static AnimationManager.AnimationAccessor<StaticAnimation> COLON_SHOT;
     public static AnimationManager.AnimationAccessor<StaticAnimation> COLON_FAN;
     public static AnimationManager.AnimationAccessor<StaticAnimation> DASH_SHOT;
+    public static AnimationManager.AnimationAccessor<StaticAnimation> EQUAL_SLASH;
+    public static AnimationManager.AnimationAccessor<StaticAnimation> SPEAR_CHARGE;
 
     private ModAnimations() {
     }
@@ -42,5 +46,11 @@ public final class ModAnimations {
         // 破折号开火：双手前伸瞄准 + 后坐
         DASH_SHOT = builder.nextAccessor("biped/combat/dash_shot",
                 (accessor) -> new StaticAnimation(false, accessor, Armatures.BIPED));
+        // 等号的左手斩击：镜像原版斧挥砍，让左臂完成动作
+        EQUAL_SLASH = builder.nextAccessor("biped/combat/equal_slash",
+                (accessor) -> new StaticAnimation(false, accessor, Armatures.BIPED));
+        // 删除线蓄力：举起长矛的循环姿态
+        SPEAR_CHARGE = builder.nextAccessor("biped/combat/spear_charge",
+                (accessor) -> new StaticAnimation(true, accessor, Armatures.BIPED));
     }
 }

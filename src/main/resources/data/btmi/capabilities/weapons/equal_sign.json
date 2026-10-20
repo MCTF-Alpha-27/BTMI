@@ -1,0 +1,14 @@
+{
+  "type": "btmi:equal_sign",
+  "attributes": {
+    "common": {
+      "impact": 1.1,
+      "max_strikes": 2
+    }
+  },
+  "collider": {
+    "number": 3,
+    "center": [0.0, 0.0, -0.75],
+    "size": [0.5, 0.5, 1.6]
+  }
+}

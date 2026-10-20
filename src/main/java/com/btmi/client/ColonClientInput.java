@@ -40,9 +40,10 @@ public final class ColonClientInput {
 
         if (down && !attackWasDown) {
             PacketDistributor.sendToServer(new ColonActionPayload(ColonActionPayload.ACTION_FIRE, 0));
-            // 空弹时不开火，也就没有后坐力
+            // 空弹时不开火，也就没有后坐
             if (hasAmmo(player)) {
                 ColonRecoilHandler.kick();
+                GunFirstPersonHandler.kick();
             }
         }
         attackWasDown = down;

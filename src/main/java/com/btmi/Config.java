@@ -150,6 +150,58 @@ public class Config {
             .defineInRange("obeliskKnellMarkBonus", 0.5D, 0.0D, 10.0D);
 
     // ------------------------------------------------------------------
+    // 等号 / 斜杠
+    // ------------------------------------------------------------------
+
+    public static final ModConfigSpec.DoubleValue DUAL_STRIKETHROUGH_DAMAGE = BUILDER
+            .comment("删除线对范围内每个目标造成的伤害。")
+            .defineInRange("dualStrikethroughDamage", 24.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue DUAL_STRIKETHROUGH_RADIUS = BUILDER
+            .comment("删除线的伤害半径（格）。")
+            .defineInRange("dualStrikethroughRadius", 8.0D, 0.0D, 32.0D);
+
+    public static final ModConfigSpec.IntValue DUAL_STRIKETHROUGH_COOLDOWN = BUILDER
+            .comment("删除线的冷却时间（刻）。")
+            .defineInRange("dualStrikethroughCooldown", 220, 0, 7200);
+
+    public static final ModConfigSpec.DoubleValue DUAL_SPEAR_DAMAGE = BUILDER
+            .comment("删除线触发斩杀后，投掷长矛造成的伤害。")
+            .defineInRange("dualSpearDamage", 40.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue DUAL_SPEAR_RANGE = BUILDER
+            .comment("投掷长矛的贯穿距离（格）。")
+            .defineInRange("dualSpearRange", 24.0D, 1.0D, 64.0D);
+
+    public static final ModConfigSpec.DoubleValue DUAL_SPEAR_DAMAGE_PER_KILL = BUILDER
+            .comment("删除线投矛时，每有一个被斧斩击杀的浮空单位，额外增加的伤害。")
+            .defineInRange("dualSpearDamagePerKill", 15.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue EQUAL_SLASH_DAMAGE = BUILDER
+            .comment("等号的断界伤害。")
+            .defineInRange("equalSlashDamage", 22.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue EQUAL_SLASH_RADIUS = BUILDER
+            .comment("断界的扇形半径（格）。")
+            .defineInRange("equalSlashRadius", 4.5D, 0.0D, 32.0D);
+
+    public static final ModConfigSpec.IntValue EQUAL_SLASH_COOLDOWN = BUILDER
+            .comment("断界的冷却时间（刻）。")
+            .defineInRange("equalSlashCooldown", 160, 0, 7200);
+
+    public static final ModConfigSpec.DoubleValue SLASH_THRUST_DAMAGE = BUILDER
+            .comment("斜杠的贯穿线伤害。")
+            .defineInRange("slashThrustDamage", 18.0D, 0.0D, 1000.0D);
+
+    public static final ModConfigSpec.DoubleValue SLASH_THRUST_RANGE = BUILDER
+            .comment("贯穿线的距离（格）。")
+            .defineInRange("slashThrustRange", 10.0D, 1.0D, 64.0D);
+
+    public static final ModConfigSpec.IntValue SLASH_THRUST_COOLDOWN = BUILDER
+            .comment("贯穿线的冷却时间（刻）。")
+            .defineInRange("slashThrustCooldown", 140, 0, 7200);
+
+    // ------------------------------------------------------------------
     // 冒号
     // ------------------------------------------------------------------
 

@@ -27,6 +27,9 @@ public final class ModClientSetup {
         // 激光弹
         event.registerEntityRenderer(BTMI.LASER_BOLT_ENTITY.get(), LaserBoltRenderer::new);
         event.registerEntityRenderer(BTMI.LASER_BEAM.get(), LaserBeamRenderer::new);
+        event.registerEntityRenderer(BTMI.RED_LINE.get(), RedLineRenderer::new);
+        event.registerEntityRenderer(BTMI.SPEAR_BEAM.get(), SpearBeamRenderer::new);
+        event.registerEntityRenderer(BTMI.GROUND_CRACK.get(), GroundCrackRenderer::new);
         event.registerEntityRenderer(BTMI.PROJECTION_PORTAL.get(), ProjectionPortalRenderer::new);
         event.registerEntityRenderer(BTMI.FLAME_BUTTERFLY.get(), FlameButterflyRenderer::new);
         event.registerEntityRenderer(BTMI.COLON_BULLET.get(),

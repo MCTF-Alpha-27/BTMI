@@ -1,0 +1,19 @@
+{
+  "category": "SPEAR",
+  "usable_in_offhand": true,
+  "collider": {
+    "number": 3,
+    "center": [0.0, 0.0, -1.1],
+    "size": [0.35, 0.35, 2.2]
+  },
+  "styles": {
+    "default": "one_hand",
+    "cases": []
+  },
+  "offhand_item_compatible_predicate": [
+    {
+      "predicate": "epicfight:offhand_item_category",
+      "category": "AXE"
+    }
+  ]
+}

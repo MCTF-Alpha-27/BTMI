@@ -23,6 +23,8 @@ public final class ModNetworking {
         registrar.playToServer(DashActionPayload.TYPE, DashActionPayload.STREAM_CODEC, DashActionPayload::handle);
         // 客户端 -> 服务端：感叹号的技能
         registrar.playToServer(ExclamationPayload.TYPE, ExclamationPayload.STREAM_CODEC, ExclamationPayload::handle);
+        // 客户端 -> 服务端：等号 + 斜杠的联动技
+        registrar.playToServer(DualWeaponPayload.TYPE, DualWeaponPayload.STREAM_CODEC, DualWeaponPayload::handle);
         // 客户端 -> 服务端：猩红之牙的开火与技能
         registrar.playToServer(CrimsonFangPayload.TYPE, CrimsonFangPayload.STREAM_CODEC, CrimsonFangPayload::handle);
         // 客户端 -> 服务端：烈焰蝶技能

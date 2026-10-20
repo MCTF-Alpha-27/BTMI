@@ -28,6 +28,9 @@ public final class CrimsonFangClientInput {
         boolean attackDown = minecraft.options.keyAttack.isDown() || minecraft.mouseHandler.isLeftPressed();
         if (attackDown) {
             PacketDistributor.sendToServer(new CrimsonFangPayload(CrimsonFangPayload.ACTION_FIRE));
+            if (!minecraft.player.getCooldowns().isOnCooldown(BTMI.CRIMSON_FANG.get())) {
+                GunFirstPersonHandler.kick();
+            }
         }
     }
 

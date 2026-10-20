@@ -9,6 +9,7 @@ import com.btmi.Config;
 import com.btmi.item.BulletType;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -23,7 +24,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -144,6 +145,21 @@ public class ColonBullet extends ThrowableItemProjectile {
         }
     }
 
+    private static boolean hasFireSupport(ServerLevel level, BlockPos pos) {
+        BlockPos below = pos.below();
+        if (level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+            return true;
+        }
+        for (Direction direction : Direction.values()) {
+            BlockPos neighbor = pos.relative(direction);
+            BlockState state = level.getBlockState(neighbor);
+            if (state.isFlammable(level, neighbor, direction.getOpposite())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void impact(BulletType type, Vec3 pos) {
         if (!(this.level() instanceof ServerLevel level)) {
             return;
@@ -171,11 +187,13 @@ public class ColonBullet extends ThrowableItemProjectile {
                             if (!level.getBlockState(firePos).isAir()) {
                                 continue;
                             }
-                            BlockState below = level.getBlockState(firePos.below());
-                            if (below.isAir() || !below.isSolidRender(level, firePos.below())) {
+                            if (!hasFireSupport(level, firePos)) {
                                 continue;
                             }
-                            level.setBlockAndUpdate(firePos, Blocks.FIRE.defaultBlockState());
+                            BlockState fire = BaseFireBlock.getState(level, firePos);
+                            if (fire.canSurvive(level, firePos)) {
+                                level.setBlockAndUpdate(firePos, fire);
+                            }
                         }
                     }
                 }

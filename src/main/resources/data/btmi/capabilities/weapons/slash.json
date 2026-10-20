@@ -1,0 +1,14 @@
+{
+  "type": "btmi:slash",
+  "attributes": {
+    "common": {
+      "impact": 0.9,
+      "max_strikes": 2
+    }
+  },
+  "collider": {
+    "number": 3,
+    "center": [0.0, 0.0, -1.1],
+    "size": [0.35, 0.35, 2.2]
+  }
+}

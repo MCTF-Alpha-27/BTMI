@@ -7,19 +7,24 @@ import org.slf4j.Logger;
 
 import com.btmi.entity.ColonBullet;
 import com.btmi.entity.FlameButterfly;
+import com.btmi.entity.GroundCrack;
 import com.btmi.entity.LaserBeam;
 import com.btmi.entity.LaserBolt;
 import com.btmi.entity.LightOrb;
 import com.btmi.entity.ObeliskSentinel;
 import com.btmi.entity.ProjectionPortal;
+import com.btmi.entity.RedLine;
+import com.btmi.entity.SpearBeam;
 import com.btmi.item.BulletItem;
 import com.btmi.item.ColonItem;
 import com.btmi.item.CrimsonFangItem;
 import com.btmi.item.DashItem;
+import com.btmi.item.EqualSignItem;
 import com.btmi.item.ExclamationMarkItem;
 import com.btmi.item.FlameCapeItem;
 import com.btmi.item.ObeliskItem;
 import com.btmi.item.ObeliskRecallItem;
+import com.btmi.item.SlashItem;
 import com.btmi.menu.ColonMenu;
 import com.btmi.weapon.ModWeaponTypes;
 import com.mojang.logging.LogUtils;
@@ -101,6 +106,26 @@ public class BTMI {
             () -> new CrimsonFangItem(new Item.Properties()
                     .attributes(CrimsonFangItem.createWeaponAttributes())
                     .durability(2000)
+                    .rarity(Rarity.EPIC)
+                    .fireResistant()
+                    .stacksTo(1)));
+
+    // ------------------------------------------------------------------
+    // 双持联动：等号 / 斜杠
+    // ------------------------------------------------------------------
+
+    public static final DeferredItem<EqualSignItem> EQUAL_SIGN = ITEMS.register("equal_sign",
+            () -> new EqualSignItem(new Item.Properties()
+                    .attributes(EqualSignItem.createWeaponAttributes())
+                    .durability(1800)
+                    .rarity(Rarity.EPIC)
+                    .fireResistant()
+                    .stacksTo(1)));
+
+    public static final DeferredItem<SlashItem> SLASH = ITEMS.register("slash",
+            () -> new SlashItem(new Item.Properties()
+                    .attributes(SlashItem.createWeaponAttributes())
+                    .durability(1500)
                     .rarity(Rarity.EPIC)
                     .fireResistant()
                     .stacksTo(1)));
@@ -274,6 +299,27 @@ public class BTMI {
                     .clientTrackingRange(16)
                     .updateInterval(1)
                     .build("laser_beam"));
+    public static final DeferredHolder<EntityType<?>, EntityType<RedLine>> RED_LINE = ENTITY_TYPES.register(
+            "red_line",
+            () -> EntityType.Builder.<RedLine>of(RedLine::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("red_line"));
+    public static final DeferredHolder<EntityType<?>, EntityType<SpearBeam>> SPEAR_BEAM = ENTITY_TYPES.register(
+            "spear_beam",
+            () -> EntityType.Builder.<SpearBeam>of(SpearBeam::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(24)
+                    .updateInterval(1)
+                    .build("spear_beam"));
+    public static final DeferredHolder<EntityType<?>, EntityType<GroundCrack>> GROUND_CRACK = ENTITY_TYPES.register(
+            "ground_crack",
+            () -> EntityType.Builder.<GroundCrack>of(GroundCrack::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .build("ground_crack"));
     public static final DeferredHolder<EntityType<?>, EntityType<ProjectionPortal>> PROJECTION_PORTAL = ENTITY_TYPES.register(
             "projection_portal",
             () -> EntityType.Builder.<ProjectionPortal>of(ProjectionPortal::new, MobCategory.MISC)
@@ -303,6 +349,8 @@ public class BTMI {
                         output.accept(ENERGY_CORE.get());
                         output.accept(EXCLAMATION_MARK.get());
                         output.accept(DASH.get());
+                        output.accept(EQUAL_SIGN.get());
+                        output.accept(SLASH.get());
                         output.accept(OBELISK.get());
                         output.accept(COLON.get());
                         BULLET_ITEMS.forEach(bullet -> output.accept(bullet.get()));
