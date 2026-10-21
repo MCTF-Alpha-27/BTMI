@@ -19,6 +19,8 @@ import org.joml.Matrix4f;
 public class ProjectionPortalRenderer extends EntityRenderer<ProjectionPortal> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "textures/entity/projection_portal.png");
+    private static final ResourceLocation RING_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "textures/entity/projection_portal_ring.png");
 
     private static final float RADIUS = 1.15F;
     private static final int CLOSE_TICKS = 10;
@@ -34,6 +36,8 @@ public class ProjectionPortalRenderer extends EntityRenderer<ProjectionPortal> {
         if (openness <= 0.02F) {
             return;
         }
+
+        renderRing(entity, partialTick, pose, buffer, openness);
 
         pose.pushPose();
         pose.mulPose(this.entityRenderDispatcher.cameraOrientation());
@@ -55,6 +59,35 @@ public class ProjectionPortalRenderer extends EntityRenderer<ProjectionPortal> {
     private static void vertex(VertexConsumer consumer, Matrix4f matrix, float x, float y, float u, float v) {
         consumer.addVertex(matrix, x, y, 0.0F)
                 .setColor(255, 255, 255, 255)
+                .setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(LightTexture.FULL_BRIGHT)
+                .setNormal(0.0F, 0.0F, 1.0F);
+    }
+
+    private void renderRing(ProjectionPortal entity, float partialTick, PoseStack pose,
+                            MultiBufferSource buffer, float openness) {
+        pose.pushPose();
+        pose.mulPose(this.entityRenderDispatcher.cameraOrientation());
+        pose.mulPose(Axis.ZP.rotationDegrees(
+                -(entity.tickCount * 3.5F + partialTick * 3.5F - entity.openDelay() * 3.5F)));
+        float scale = RADIUS * openness * 1.65F;
+        pose.scale(scale, scale, 1.0F);
+
+        VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(RING_TEXTURE));
+        Matrix4f matrix = pose.last().pose();
+        int alpha = (int) (openness * 200.0F);
+        ringVertex(consumer, matrix, -1.0F, -1.0F, 0.0F, 1.0F, alpha);
+        ringVertex(consumer, matrix, 1.0F, -1.0F, 1.0F, 1.0F, alpha);
+        ringVertex(consumer, matrix, 1.0F, 1.0F, 1.0F, 0.0F, alpha);
+        ringVertex(consumer, matrix, -1.0F, 1.0F, 0.0F, 0.0F, alpha);
+        pose.popPose();
+    }
+
+    private static void ringVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y,
+                                   float u, float v, int alpha) {
+        consumer.addVertex(matrix, x, y, 0.0F)
+                .setColor(255, 255, 255, alpha)
                 .setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(LightTexture.FULL_BRIGHT)

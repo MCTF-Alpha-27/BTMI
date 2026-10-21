@@ -54,14 +54,12 @@
   "item.btmi.cryo_bullet.tooltip": "冻结区域内的生物并大幅减速",
   "item.btmi.seeker_bullet": "追踪弹",
   "item.btmi.seeker_bullet.tooltip": "自动锁定附近最近的目标并偏转追击",
-
   "key.categories.btmi": "钟楼军工",
   "key.btmi.obelisk_detonate": "引爆示亡号",
   "key.btmi.ammo_wheel": "选择子弹",
   "key.btmi.weapon_skill": "武器技能",
   "key.btmi.butterfly_strike": "蝴蝶出击",
   "hud.btmi.dash_projection": "万象投影 %s/%s",
-
   "item.btmi.crimson_fang": "猩红之牙",
   "item.btmi.crimson_fang.tooltip1": "左键开火，右键切换开火模式",
   "item.btmi.crimson_fang.tooltip2": "%s键：旋身一周画出能量环，随后向外脉冲造成伤害",
@@ -71,23 +69,18 @@
   "item.btmi.crimson_fang.mode.burst": "连发",
   "item.btmi.crimson_fang.mode.laser": "激光",
   "item.btmi.crimson_fang.mode.shotgun": "霰弹",
-
   "item.btmi.flame_cape": "烈焰蝶",
   "item.btmi.flame_cape.tooltip1": "火焰流形织成的披风，装备于胸甲槽位",
   "item.btmi.flame_cape.tooltip2": "穿戴时，你造成的任何伤害都会附加火焰伤害并点燃目标",
   "item.btmi.flame_cape.tooltip3": "%s键召唤环绕的蝴蝶；%s键让它们扑向准星指向的目标",
   "item.btmi.flame_cape.lore": "披在肩上的不是火，是一群不肯散场的蝴蝶。",
-
   "item.btmi.black_steel_ingot": "黑钢锭",
   "item.btmi.crimson_alloy": "绯红合金",
   "item.btmi.energy_core": "能量核心",
-
   "container.btmi.colon": "冒号弹巢",
   "gui.btmi.colon.wheel": "选择子弹",
   "gui.btmi.colon.empty": "空弹巢",
-
   "fml.menu.mods.info.description.btmi": "史诗战斗附属模组，添加了多种新武器。",
-
   "btmi.configuration.title": "钟楼军工 配置",
   "btmi.configuration.section.btmi.common.toml": "钟楼军工 配置",
   "btmi.configuration.section.btmi.common.toml.title": "钟楼军工 配置",

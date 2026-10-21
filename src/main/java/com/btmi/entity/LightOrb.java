@@ -2,8 +2,8 @@ package com.btmi.entity;
 
 import com.btmi.BTMI;
 import com.btmi.Config;
+import com.btmi.entity.ProjectionShockwave;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -43,13 +43,6 @@ public class LightOrb extends ThrowableItemProjectile {
     @Override
     public void tick() {
         super.tick();
-        // 飞行拖尾（由服务端发送给附近客户端）
-        if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.END_ROD,
-                    this.getX(), this.getY(), this.getZ(), 2, 0.02D, 0.02D, 0.02D, 0.0D);
-            serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                    this.getX(), this.getY(), this.getZ(), 1, 0.05D, 0.05D, 0.05D, 0.0D);
-        }
         if (this.tickCount > MAX_LIFE_TICKS) {
             this.discard();
         }
@@ -72,15 +65,12 @@ public class LightOrb extends ThrowableItemProjectile {
         if (this.level().isClientSide) {
             return;
         }
-        // 命中时：召唤闪电 + 粒子 + 音效
+        // 命中时：召唤闪电 + 贴图冲击波 + 音效
         this.strikeLightning();
         if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.EXPLOSION,
-                    this.getX(), this.getY(), this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
-            serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                    this.getX(), this.getY(), this.getZ(), 40, 0.6D, 0.6D, 0.6D, 0.25D);
-            serverLevel.sendParticles(ParticleTypes.FLASH,
-                    this.getX(), this.getY(), this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            serverLevel.addFreshEntity(new ProjectionShockwave(serverLevel, this.position(), 2.2F, false));
+            serverLevel.addFreshEntity(new ProjectionShockwave(serverLevel,
+                    this.position().add(0.0D, -0.2D, 0.0D), 2.8F, true));
             serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
                     SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.PLAYERS, 1.2F, 1.1F);
         }

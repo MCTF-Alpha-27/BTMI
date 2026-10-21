@@ -5,16 +5,6 @@ plugins {
     id 'idea'
 }
 
-// Epic Fight is a local-only dependency and is not distributed with this repository.
-def epicFightJar = file("libs/epic-fight-${epic_fight_version}-mc${minecraft_version}-neoforge.jar")
-if (!epicFightJar.exists()) {
-    throw new GradleException(
-            "Missing Epic Fight jar: ${epicFightJar}\n" +
-            "Download Epic Fight ${epic_fight_version} for Minecraft ${minecraft_version} (NeoForge) " +
-            "and place it in the libs/ directory."
-    )
-}
-
 tasks.named('wrapper', Wrapper).configure {
     // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
     // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
@@ -37,8 +27,14 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
-    flatDir { dir 'libs' }
+    // Epic Fight comes from Curse Maven (CurseForge project 405076, file 8175609).
+    maven {
+        name = 'CurseMaven'
+        url = 'https://cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
 }
 
 base {
@@ -133,9 +129,10 @@ configurations {
 }
 
 dependencies {
-    // Epic Fight - the mod this addon is built on top of. The jar lives in ./libs.
+    // Epic Fight - the mod this addon is built on top of.
+    // CurseForge project 405076, file 8175609 (21.17.3.1-mc1.21.1-neoforge).
     // ModDevGradle detects it as a mod and puts it on both the compile and runtime classpath.
-    implementation "local:epic-fight-${epic_fight_version}-mc${minecraft_version}-neoforge:1.0"
+    implementation 'curse.maven:epic-fight-mod-405076:8175609'
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

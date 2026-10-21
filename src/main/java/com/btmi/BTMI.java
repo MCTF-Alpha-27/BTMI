@@ -13,6 +13,7 @@ import com.btmi.entity.LaserBolt;
 import com.btmi.entity.LightOrb;
 import com.btmi.entity.ObeliskSentinel;
 import com.btmi.entity.ProjectionPortal;
+import com.btmi.entity.ProjectionShockwave;
 import com.btmi.entity.RedLine;
 import com.btmi.entity.SpearBeam;
 import com.btmi.item.BulletItem;
@@ -327,6 +328,13 @@ public class BTMI {
                     .clientTrackingRange(12)
                     .updateInterval(1)
                     .build("projection_portal"));
+    public static final DeferredHolder<EntityType<?>, EntityType<ProjectionShockwave>> PROJECTION_SHOCKWAVE = ENTITY_TYPES.register(
+            "projection_shockwave",
+            () -> EntityType.Builder.<ProjectionShockwave>of(ProjectionShockwave::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .build("projection_shockwave"));
     public static final DeferredHolder<EntityType<?>, EntityType<ColonBullet>> COLON_BULLET = ENTITY_TYPES.register(
             "colon_bullet",
             () -> EntityType.Builder.<ColonBullet>of(ColonBullet::new, MobCategory.MISC)

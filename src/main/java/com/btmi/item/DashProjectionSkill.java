@@ -9,9 +9,9 @@ import java.util.UUID;
 
 import com.btmi.BTMI;
 import com.btmi.entity.ProjectionPortal;
+import com.btmi.entity.ProjectionShockwave;
 import com.btmi.network.DashChargePayload;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +19,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import yesman.epicfight.gameasset.Animations;
+import yesman.epicfight.world.capabilities.EpicFightCapabilities;
+import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
 
 public final class DashProjectionSkill {
     public static final int REQUIRED_HITS = 10;
@@ -110,7 +114,17 @@ public final class DashProjectionSkill {
                 SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.2F, 0.7F);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.EVOKER_CAST_SPELL, SoundSource.PLAYERS, 1.4F, 0.6F);
-        level.sendParticles(ParticleTypes.REVERSE_PORTAL, base.x, base.y, base.z,
-                60, 2.0D, 0.6D, 2.0D, 0.1D);
+
+        level.addFreshEntity(new ProjectionShockwave(level,
+                player.position().add(0.0D, 0.05D, 0.0D), 4.5F, true));
+        level.addFreshEntity(new ProjectionShockwave(level, base, 2.4F, false));
+        if (hit.getType() != HitResult.Type.MISS) {
+            level.addFreshEntity(new ProjectionShockwave(level, target, 2.2F, false));
+        }
+
+        ServerPlayerPatch patch = EpicFightCapabilities.getServerPlayerPatch(player);
+        if (patch != null) {
+            patch.playAnimationSynchronized(Animations.EVOKER_CAST_SPELL, 0.0F);
+        }
     }
 }

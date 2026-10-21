@@ -2,6 +2,8 @@ package com.btmi.client;
 
 import com.btmi.BTMI;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +13,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
 @EventBusSubscriber(modid = BTMI.MODID, value = Dist.CLIENT)
 public final class ModClientSetup {
@@ -20,8 +24,7 @@ public final class ModClientSetup {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // 光球
-        event.registerEntityRenderer(BTMI.LIGHT_ORB_ENTITY.get(),
-                context -> new ThrownItemRenderer<>(context, 1.6F, true));
+        event.registerEntityRenderer(BTMI.LIGHT_ORB_ENTITY.get(), LightOrbRenderer::new);
         // 示亡号的悬浮实体
         event.registerEntityRenderer(BTMI.OBELISK_SENTINEL.get(), ObeliskSentinelRenderer::new);
         // 激光弹
@@ -31,6 +34,7 @@ public final class ModClientSetup {
         event.registerEntityRenderer(BTMI.SPEAR_BEAM.get(), SpearBeamRenderer::new);
         event.registerEntityRenderer(BTMI.GROUND_CRACK.get(), GroundCrackRenderer::new);
         event.registerEntityRenderer(BTMI.PROJECTION_PORTAL.get(), ProjectionPortalRenderer::new);
+        event.registerEntityRenderer(BTMI.PROJECTION_SHOCKWAVE.get(), ProjectionShockwaveRenderer::new);
         event.registerEntityRenderer(BTMI.FLAME_BUTTERFLY.get(), FlameButterflyRenderer::new);
         event.registerEntityRenderer(BTMI.COLON_BULLET.get(),
                 context -> new ColonBulletRenderer(context, 0.35F));
@@ -40,6 +44,24 @@ public final class ModClientSetup {
     @SubscribeEvent
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(BTMI.COLON_MENU.get(), ColonScreen::new);
+    }
+
+    @SubscribeEvent
+    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        IClientItemExtensions extensions = new IClientItemExtensions() {
+            private DashStaffRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    Minecraft minecraft = Minecraft.getInstance();
+                    this.renderer = new DashStaffRenderer(
+                            minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+                }
+                return this.renderer;
+            }
+        };
+        event.registerItem(extensions, BTMI.DASH.get());
     }
 
     @SuppressWarnings("deprecation")

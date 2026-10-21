@@ -12,18 +12,9 @@
 2. `settings.gradle`
    - 增加了一段把 `maven.neoforged.net` 重写为 `neoforged.forgecdn.net` 的逻辑（前者在此网络下被 DNS 污染）。
 
-## 构建准备
+## 前置依赖
 
-Epic Fight 以本地 jar 形式依赖（`flatDir { dir 'libs' }`）。
-
-- 文件：`epic-fight-21.17.3.1-mc1.21.1-neoforge.jar`
-- 版本：Epic Fight `21.17.3.1` / Minecraft `1.21.1` / NeoForge
-- 路径：`libs/epic-fight-21.17.3.1-mc1.21.1-neoforge.jar`
-
-根据分发原则，本仓库不包含 Epic Fight 的二进制文件，请从官方源下载。
-
-- CurseForge：<https://www.curseforge.com/minecraft/mc-mods/epic-fight-mod>
-- GitHub：<https://github.com/Epic-Fight/epicfight>
+Epic Fight 通过 **Curse Maven** 自动解析（CurseForge 项目 `405076`，文件 `8175609`，对应 `21.17.3.1-mc1.21.1-neoforge`）。构建时需能访问 `cursemaven.com`：
 
 ## 目录结构
 

@@ -3,8 +3,8 @@ package com.btmi.entity;
 import java.util.UUID;
 
 import com.btmi.BTMI;
+import com.btmi.entity.ProjectionShockwave;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -87,33 +87,21 @@ public class ProjectionPortal extends Entity {
         this.setYRot((float) (Mth.atan2(direction.x, direction.z) * (180.0D / Math.PI)));
         this.setXRot((float) (-Math.asin(Mth.clamp(direction.y, -1.0D, 1.0D)) * (180.0D / Math.PI)));
 
+        if (age == 0) {
+            level.addFreshEntity(new ProjectionShockwave(level, this.position(), 1.8F, false));
+        }
+
         if (age <= EMERGE_TICKS) {
-            // 开门期间的粒子
-            level.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY(), this.getZ(),
-                    8, 0.55D, 0.55D, 0.55D, 0.05D);
-            level.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY(), this.getZ(),
-                    1, 0.3D, 0.3D, 0.3D, 0.0D);
             return;
         }
 
         int active = age - fireStartDelay();
         if (active < 0) {
-            // 门已经开了，等所有门都开完再一起射击
-            if (age % 4 == 0) {
-                level.sendParticles(ParticleTypes.REVERSE_PORTAL, this.getX(), this.getY(), this.getZ(),
-                        1, 0.35D, 0.35D, 0.35D, 0.01D);
-            }
             return;
         }
         if (active >= ACTIVE_TICKS) {
             this.discard();
             return;
-        }
-
-        // 开门后门面还留一点微光
-        if (active % 4 == 0) {
-            level.sendParticles(ParticleTypes.REVERSE_PORTAL, this.getX(), this.getY(), this.getZ(),
-                    2, 0.45D, 0.45D, 0.45D, 0.01D);
         }
 
         int offset = this.index * FIRE_STAGGER;
@@ -136,8 +124,7 @@ public class ProjectionPortal extends Entity {
         orb.shoot(direction.x, direction.y, direction.z, 2.2F, 0.0F);
         level.addFreshEntity(orb);
 
-        level.sendParticles(ParticleTypes.ENCHANT, muzzle.x, muzzle.y, muzzle.z,
-                6, 0.1D, 0.1D, 0.1D, 0.2D);
+        level.addFreshEntity(new ProjectionShockwave(level, muzzle, 0.9F, false));
         level.playSound(null, muzzle.x, muzzle.y, muzzle.z,
                 SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.6F, 1.6F);
     }

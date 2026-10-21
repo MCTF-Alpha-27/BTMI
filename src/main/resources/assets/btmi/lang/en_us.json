@@ -54,14 +54,12 @@
   "item.btmi.cryo_bullet.tooltip": "Freezes and heavily slows creatures in the area",
   "item.btmi.seeker_bullet": "Seeker Bullet",
   "item.btmi.seeker_bullet.tooltip": "Locks onto the nearest target and curves toward it",
-
   "key.categories.btmi": "Bell Tower Military Industry",
   "key.btmi.obelisk_detonate": "Detonate Obelisk",
   "key.btmi.ammo_wheel": "Select Bullet",
   "key.btmi.weapon_skill": "Weapon Skill",
   "key.btmi.butterfly_strike": "Butterfly Strike",
   "hud.btmi.dash_projection": "Myriad Projection %s/%s",
-
   "item.btmi.crimson_fang": "Crimson Fang",
   "item.btmi.crimson_fang.tooltip1": "Left click: fire, right click: switch firing mode",
   "item.btmi.crimson_fang.tooltip2": "Press the %s key: spin once to draw an energy ring, which then pulses outward for damage",
@@ -71,23 +69,18 @@
   "item.btmi.crimson_fang.mode.burst": "Burst",
   "item.btmi.crimson_fang.mode.laser": "Laser",
   "item.btmi.crimson_fang.mode.shotgun": "Shotgun",
-
   "item.btmi.flame_cape": "Flame Butterfly",
   "item.btmi.flame_cape.tooltip1": "A cape woven from flowing flames, worn in the chest slot",
   "item.btmi.flame_cape.tooltip2": "Any damage you deal gains extra fire damage and sets the target ablaze",
   "item.btmi.flame_cape.tooltip3": "Press the %s key to summon butterflies; press the %s key to send them at the target under your crosshair",
   "item.btmi.flame_cape.lore": "What rests on your shoulders is not fire, but a swarm of butterflies that refuses to leave.",
-
   "item.btmi.black_steel_ingot": "Black Steel Ingot",
   "item.btmi.crimson_alloy": "Crimson Alloy",
   "item.btmi.energy_core": "Energy Core",
-
   "container.btmi.colon": "Colon Cylinder",
   "gui.btmi.colon.wheel": "Select Bullet",
   "gui.btmi.colon.empty": "Empty chamber",
-
   "fml.menu.mods.info.description.btmi": "Bell Tower Military Industry (BTMI)\nAn Epic Fight addon.",
-
   "btmi.configuration.title": "BTMI Configs",
   "btmi.configuration.section.btmi.common.toml": "BTMI Configs",
   "btmi.configuration.section.btmi.common.toml.title": "BTMI Configs",
