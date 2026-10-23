@@ -101,53 +101,53 @@ public class Config {
     // 示亡号
     // ------------------------------------------------------------------
 
-    public static final ModConfigSpec.IntValue OBELISK_SABER_TICKS = BUILDER
+    public static final ModConfigSpec.IntValue DEATH_SIGN_SABER_TICKS = BUILDER
             .comment("左键攻击后，示亡号前端的光剑保持展开的时长（刻）。")
-            .defineInRange("obeliskSaberTicks", 40, 1, 1200);
+            .defineInRange("deathSignSaberTicks", 40, 1, 1200);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_RAM_DAMAGE = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_RAM_DAMAGE = BUILDER
             .comment("悬浮实体突刺冲撞时对单个目标造成的伤害。")
-            .defineInRange("obeliskRamDamage", 12.0D, 0.0D, 1000.0D);
+            .defineInRange("deathSignRamDamage", 12.0D, 0.0D, 1000.0D);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_LASER_DAMAGE = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_LASER_DAMAGE = BUILDER
             .comment("激光弹命中造成的伤害。")
-            .defineInRange("obeliskLaserDamage", 6.0D, 0.0D, 1000.0D);
+            .defineInRange("deathSignLaserDamage", 6.0D, 0.0D, 1000.0D);
 
-    public static final ModConfigSpec.IntValue OBELISK_LASER_INTERVAL = BUILDER
+    public static final ModConfigSpec.IntValue DEATH_SIGN_LASER_INTERVAL = BUILDER
             .comment("持续右键时，每多少刻射出一枚激光弹。")
-            .defineInRange("obeliskLaserInterval", 4, 1, 200);
+            .defineInRange("deathSignLaserInterval", 4, 1, 200);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_EXPLOSION_RADIUS = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_EXPLOSION_RADIUS = BUILDER
             .comment("示亡号引爆时产生的爆炸半径（格）。")
-            .defineInRange("obeliskExplosionRadius", 6.0D, 0.0D, 64.0D);
+            .defineInRange("deathSignExplosionRadius", 6.0D, 0.0D, 64.0D);
 
-    public static final ModConfigSpec.BooleanValue OBELISK_EXPLOSION_BREAKS_BLOCKS = BUILDER
+    public static final ModConfigSpec.BooleanValue DEATH_SIGN_EXPLOSION_BREAKS_BLOCKS = BUILDER
             .comment("引爆的爆炸是否破坏方块。")
-            .define("obeliskExplosionBreaksBlocks", true);
+            .define("deathSignExplosionBreaksBlocks", true);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_DAMAGE = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_KNELL_DAMAGE = BUILDER
             .comment("丧钟落点中心造成的伤害。")
-            .defineInRange("obeliskKnellDamage", 22.0D, 0.0D, 1000.0D);
+            .defineInRange("deathSignKnellDamage", 22.0D, 0.0D, 1000.0D);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_ARM_DAMAGE = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_KNELL_ARM_DAMAGE = BUILDER
             .comment("光之十字四条臂造成的伤害。")
-            .defineInRange("obeliskKnellArmDamage", 12.0D, 0.0D, 1000.0D);
+            .defineInRange("deathSignKnellArmDamage", 12.0D, 0.0D, 1000.0D);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_RADIUS = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_KNELL_RADIUS = BUILDER
             .comment("丧钟落点中心的伤害半径（格），十字臂从中心向外延伸。")
-            .defineInRange("obeliskKnellRadius", 3.0D, 0.0D, 32.0D);
+            .defineInRange("deathSignKnellRadius", 3.0D, 0.0D, 32.0D);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_ARM_LENGTH = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_KNELL_ARM_LENGTH = BUILDER
             .comment("光之十字每条臂的长度（格）。")
-            .defineInRange("obeliskKnellArmLength", 6.0D, 0.0D, 32.0D);
+            .defineInRange("deathSignKnellArmLength", 6.0D, 0.0D, 32.0D);
 
-    public static final ModConfigSpec.IntValue OBELISK_KNELL_COOLDOWN = BUILDER
+    public static final ModConfigSpec.IntValue DEATH_SIGN_KNELL_COOLDOWN = BUILDER
             .comment("丧钟的冷却时间（刻）。")
-            .defineInRange("obeliskKnellCooldown", 200, 0, 7200);
+            .defineInRange("deathSignKnellCooldown", 200, 0, 7200);
 
-    public static final ModConfigSpec.DoubleValue OBELISK_KNELL_MARK_BONUS = BUILDER
+    public static final ModConfigSpec.DoubleValue DEATH_SIGN_KNELL_MARK_BONUS = BUILDER
             .comment("亡印使激光弹伤害提高的比例（0.5 表示 +50%）。")
-            .defineInRange("obeliskKnellMarkBonus", 0.5D, 0.0D, 10.0D);
+            .defineInRange("deathSignKnellMarkBonus", 0.5D, 0.0D, 10.0D);
 
     // ------------------------------------------------------------------
     // 等号 / 斜杠

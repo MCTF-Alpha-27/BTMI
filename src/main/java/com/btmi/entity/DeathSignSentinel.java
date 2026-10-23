@@ -1,10 +1,12 @@
 package com.btmi.entity;
 
 import com.btmi.BTMI;
-import com.btmi.item.ObeliskHandler;
+import com.btmi.item.DeathSignHandler;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class ObeliskSentinel extends Entity implements ItemSupplier {
+public class DeathSignSentinel extends Entity implements ItemSupplier {
     private static final int MODE_IDLE = 0;
     private static final int MODE_RAM = 1;
     private static final int MODE_DETONATE = 2;
@@ -37,27 +40,36 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
     private static final int RAM_DURATION = 10;
     private static final int DETONATE_DURATION = 120;
 
+    private static final EntityDataAccessor<Float> TIP_PITCH =
+            SynchedEntityData.defineId(DeathSignSentinel.class, EntityDataSerializers.FLOAT);
+
     private UUID ownerUUID;
     private int ownerHand;
+    private int ownerSlot;
+    private float prevTipPitch;
     private int mode = MODE_IDLE;
     private int timer;
     private Vec3 dashDir = Vec3.ZERO;
     private final Set<UUID> ramHit = new HashSet<>();
 
-    public ObeliskSentinel(EntityType<? extends ObeliskSentinel> entityType, Level level) {
+    public DeathSignSentinel(EntityType<? extends DeathSignSentinel> entityType, Level level) {
         super(entityType, level);
     }
 
-    public ObeliskSentinel(Level level, Player owner, int hand) {
-        super(BTMI.OBELISK_SENTINEL.get(), level);
+    public DeathSignSentinel(Level level, Player owner, int hand) {
+        super(BTMI.DEATH_SIGN_SENTINEL.get(), level);
         this.ownerUUID = owner.getUUID();
         this.ownerHand = hand;
+        this.ownerSlot = hand == InteractionHand.OFF_HAND.ordinal()
+                ? Inventory.SLOT_OFFHAND
+                : owner.getInventory().selected;
         this.setPos(owner.getX(), owner.getY() + 1.2D, owner.getZ());
         this.noPhysics = true;
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(TIP_PITCH, 0.0F);
     }
 
     @Override
@@ -66,6 +78,7 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
             this.ownerUUID = compound.getUUID("Owner");
         }
         this.ownerHand = compound.getInt("Hand");
+        this.ownerSlot = compound.getInt("Slot");
     }
 
     @Override
@@ -80,15 +93,24 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
             compound.putUUID("Owner", this.ownerUUID);
         }
         compound.putInt("Hand", this.ownerHand);
+        compound.putInt("Slot", this.ownerSlot);
     }
 
     @Override
     public ItemStack getItem() {
-        return new ItemStack(BTMI.OBELISK.get());
+        return new ItemStack(BTMI.DEATH_SIGN.get());
     }
 
     public int getOwnerHand() {
         return this.ownerHand;
+    }
+
+    public float getTipPitch() {
+        return this.entityData.get(TIP_PITCH);
+    }
+
+    public float getTipPitch(float partialTick) {
+        return Mth.lerp(partialTick, this.prevTipPitch, this.getTipPitch());
     }
 
     public boolean isOwnedBy(Player player) {
@@ -111,6 +133,7 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
         }
         // Minecraft 中 yaw 对应的前方 = (sin yaw, 0, -cos yaw)，反解即 yaw = atan2(dir.x, -dir.z)
         this.setYRot((float) (Mth.atan2(dir.x, -dir.z) * (180.0D / Math.PI)));
+        this.entityData.set(TIP_PITCH, (float) Math.asin(Math.max(-1.0D, Math.min(1.0D, dir.y))));
     }
 
     public void startRam(Vec3 direction) {
@@ -138,6 +161,7 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
 
     @Override
     public void tick() {
+        this.prevTipPitch = this.getTipPitch();
         super.tick();
 
         if (this.level().isClientSide) {
@@ -172,24 +196,28 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
             this.discard();
             return;
         }
-        // 手里已经没有召回示亡号了，就不要再留着
-        InteractionHand hand = this.ownerHand == 1 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-        if (!owner.getItemInHand(hand).is(BTMI.OBELISK_RECALL.get())) {
+        if (!owner.getInventory().getItem(this.ownerSlot).is(BTMI.DEATH_SIGN_RECALL.get())) {
             this.discard();
             return;
         }
 
         Vec3 look = owner.getLookAngle();
-        Vec3 right = new Vec3(-look.z, 0.0D, look.x);
-        if (right.lengthSqr() < 1.0E-6D) {
-            right = new Vec3(1.0D, 0.0D, 0.0D);
+        Vec3 forward = new Vec3(look.x, 0.0D, look.z);
+        if (forward.lengthSqr() < 1.0E-6D) {
+            float yawRad = owner.getYRot() * ((float) Math.PI / 180.0F);
+            forward = new Vec3(-Mth.sin(yawRad), 0.0D, Mth.cos(yawRad));
+        } else {
+            forward = forward.normalize();
         }
-        right = right.normalize().scale(this.ownerHand == 1 ? -1.0D : 1.0D);
+        Vec3 right = new Vec3(-forward.z, 0.0D, forward.x)
+                .scale(this.ownerHand == 1 ? -1.0D : 1.0D);
 
         double bob = Math.sin(this.tickCount * 0.18D) * 0.15D;
+        double sideDistance = this.ownerHand == 1 ? 1.2D : 2.0D;
         Vec3 target = owner.position()
-                .add(right.scale(1.2D))
-                .add(look.x * 0.5D, 1.15D + bob, look.z * 0.5D);
+                .add(right.scale(sideDistance))
+                .add(forward.scale(0.5D))
+                .add(0.0D, 1.15D + bob, 0.0D);
 
         // 朝向跟随玩家视线，让十字架的最顶端始终指向前方
         this.faceDirection(look);
@@ -211,7 +239,7 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
             if (this.ramHit.add(target.getUUID())) {
                 target.invulnerableTime = 0;
                 target.hurt(level.damageSources().indirectMagic(this, owner),
-                        com.btmi.Config.OBELISK_RAM_DAMAGE.get().floatValue());
+                        com.btmi.Config.DEATH_SIGN_RAM_DAMAGE.get().floatValue());
                 Vec3 push = this.dashDir.normalize().scale(1.2D);
                 target.push(push.x, 0.4D, push.z);
                 target.hurtMarked = true;
@@ -254,8 +282,8 @@ public class ObeliskSentinel extends Entity implements ItemSupplier {
     }
 
     private void detonate(ServerLevel level, Player owner, LivingEntity directHit) {
-        float radius = com.btmi.Config.OBELISK_EXPLOSION_RADIUS.get().floatValue();
-        Level.ExplosionInteraction interaction = com.btmi.Config.OBELISK_EXPLOSION_BREAKS_BLOCKS.get()
+        float radius = com.btmi.Config.DEATH_SIGN_EXPLOSION_RADIUS.get().floatValue();
+        Level.ExplosionInteraction interaction = com.btmi.Config.DEATH_SIGN_EXPLOSION_BREAKS_BLOCKS.get()
                 ? Level.ExplosionInteraction.BLOCK
                 : Level.ExplosionInteraction.NONE;
 

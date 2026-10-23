@@ -21,7 +21,7 @@ public final class ModWeaponTypes {
             ServerPlayer player = patch.getOriginal();
             if (player.getMainHandItem().is(BTMI.COLON.get())
                     || player.getOffhandItem().is(BTMI.COLON.get())
-                    || player.getMainHandItem().is(BTMI.CRIMSON_FANG.get())) {
+                    || player.getMainHandItem().is(BTMI.SCARLET_FANG.get())) {
                 event.cancel();
             }
         });

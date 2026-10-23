@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "btmi:item/obelisk"
+    "layer0": "btmi:item/death_sign_lit"
   },
   "display": {
     "ground": {
@@ -39,13 +39,5 @@
       "translation": [0, 0, 0],
       "scale": [1, 1, 1]
     }
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "btmi:lit": 1.0
-      },
-      "model": "btmi:item/obelisk_lit"
-    }
-  ]
+  }
 }

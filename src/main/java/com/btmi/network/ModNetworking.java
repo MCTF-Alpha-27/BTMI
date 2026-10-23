@@ -26,11 +26,11 @@ public final class ModNetworking {
         // 客户端 -> 服务端：等号 + 斜杠的联动技
         registrar.playToServer(DualWeaponPayload.TYPE, DualWeaponPayload.STREAM_CODEC, DualWeaponPayload::handle);
         // 客户端 -> 服务端：猩红之牙的开火与技能
-        registrar.playToServer(CrimsonFangPayload.TYPE, CrimsonFangPayload.STREAM_CODEC, CrimsonFangPayload::handle);
+        registrar.playToServer(ScarletFangPayload.TYPE, ScarletFangPayload.STREAM_CODEC, ScarletFangPayload::handle);
         // 客户端 -> 服务端：烈焰蝶技能
         registrar.playToServer(FlameCapePayload.TYPE, FlameCapePayload.STREAM_CODEC, FlameCapePayload::handle);
         // 客户端 -> 服务端：示亡号的按键动作
-        registrar.playToServer(ObeliskActionPayload.TYPE, ObeliskActionPayload.STREAM_CODEC, ObeliskActionPayload::handle);
+        registrar.playToServer(DeathSignActionPayload.TYPE, DeathSignActionPayload.STREAM_CODEC, DeathSignActionPayload::handle);
         // 客户端 -> 服务端：冒号的发射与选弹
         registrar.playToServer(ColonActionPayload.TYPE, ColonActionPayload.STREAM_CODEC, ColonActionPayload::handle);
     }

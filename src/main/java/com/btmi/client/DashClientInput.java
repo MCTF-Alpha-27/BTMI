@@ -3,12 +3,12 @@ package com.btmi.client;
 import com.btmi.BTMI;
 import com.btmi.item.ColonAmmo;
 import com.btmi.network.ColonActionPayload;
-import com.btmi.network.CrimsonFangPayload;
+import com.btmi.network.ScarletFangPayload;
 import com.btmi.network.DualWeaponPayload;
 import com.btmi.network.ExclamationPayload;
 import com.btmi.network.FlameCapePayload;
 import com.btmi.network.DashActionPayload;
-import com.btmi.network.ObeliskActionPayload;
+import com.btmi.network.DeathSignActionPayload;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,7 +46,7 @@ public final class DashClientInput {
         boolean attackDown = minecraft.screen == null && holdingDash && attackKeyDown;
 
         // 武器技能键（H）
-        boolean holdingFang = minecraft.player.getMainHandItem().is(BTMI.CRIMSON_FANG.get());
+        boolean holdingFang = minecraft.player.getMainHandItem().is(BTMI.SCARLET_FANG.get());
         boolean holdingExclamation = minecraft.player.getMainHandItem().is(BTMI.EXCLAMATION_MARK.get());
         boolean holdingDual = minecraft.player.getMainHandItem().is(BTMI.SLASH.get())
                 && minecraft.player.getOffhandItem().is(BTMI.EQUAL_SIGN.get());
@@ -56,10 +56,10 @@ public final class DashClientInput {
                 || minecraft.player.getOffhandItem().is(BTMI.SLASH.get());
         boolean holdingColon = minecraft.player.getMainHandItem().is(BTMI.COLON.get())
                 || minecraft.player.getOffhandItem().is(BTMI.COLON.get());
-        boolean holdingObelisk = minecraft.player.getMainHandItem().is(BTMI.OBELISK.get())
-                || minecraft.player.getMainHandItem().is(BTMI.OBELISK_RECALL.get())
-                || minecraft.player.getOffhandItem().is(BTMI.OBELISK.get())
-                || minecraft.player.getOffhandItem().is(BTMI.OBELISK_RECALL.get());
+        boolean holdingDeathSign = minecraft.player.getMainHandItem().is(BTMI.DEATH_SIGN.get())
+                || minecraft.player.getMainHandItem().is(BTMI.DEATH_SIGN_RECALL.get())
+                || minecraft.player.getOffhandItem().is(BTMI.DEATH_SIGN.get())
+                || minecraft.player.getOffhandItem().is(BTMI.DEATH_SIGN_RECALL.get());
         boolean wearingCape = minecraft.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST)
                 .is(BTMI.FLAME_CAPE.get());
 
@@ -83,7 +83,7 @@ public final class DashClientInput {
             } else if (holdingDash) {
                 PacketDistributor.sendToServer(new DashActionPayload(DashActionPayload.ACTION_PROJECTION, 0));
             } else if (holdingFang) {
-                PacketDistributor.sendToServer(new CrimsonFangPayload(CrimsonFangPayload.ACTION_RING));
+                PacketDistributor.sendToServer(new ScarletFangPayload(ScarletFangPayload.ACTION_RING));
                 DashClientAnimations.playWeaponSpin(minecraft.player);
             } else if (holdingExclamation) {
                 PacketDistributor.sendToServer(new ExclamationPayload(ExclamationPayload.ACTION_HOMERUN));
@@ -100,8 +100,8 @@ public final class DashClientInput {
                     }
                 }
                 GunFirstPersonHandler.startFan(Math.max(1, loaded) * 2 + 3);
-            } else if (holdingObelisk) {
-                PacketDistributor.sendToServer(new ObeliskActionPayload(0, ObeliskActionPayload.ACTION_KNELL));
+            } else if (holdingDeathSign) {
+                PacketDistributor.sendToServer(new DeathSignActionPayload(0, DeathSignActionPayload.ACTION_KNELL));
                 DashClientAnimations.playPointGesture(minecraft.player);
             } else if (wearingCape) {
                 PacketDistributor.sendToServer(new FlameCapePayload(FlameCapePayload.ACTION_SUMMON));

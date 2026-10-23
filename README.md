@@ -26,10 +26,10 @@ src/main/java/com/btmi/
 ├── item/
 │   ├── ExclamationMarkItem.java / SmashHandler.java        # 感叹号：蓄力重击 / 全垒打
 │   ├── DashItem.java / DashAbilityHandler.java / DashProjectionSkill.java
-│   ├── ObeliskItem.java / ObeliskRecallItem.java / ObeliskHandler.java
+│   ├── DeathSignItem.java / DeathSignRecallItem.java / DeathSignHandler.java
 │   ├── ColonItem.java / ColonAmmo.java / ColonHandler.java
 │   ├── BulletItem.java / BulletType.java                   # 六种子弹
-│   ├── CrimsonFangItem.java / CrimsonFangHandler.java
+│   ├── ScarletFangItem.java / ScarletFangHandler.java
 │   ├── FlameCapeItem.java / FlameCapeHandler.java
 │   ├── EqualSignItem.java                                  # 等号（双头斧）
 │   ├── SlashItem.java                                      # 斜杠（矛）
@@ -37,7 +37,7 @@ src/main/java/com/btmi/
 ├── entity/
 │   ├── LightOrb.java / LaserBolt.java / LaserBeam.java
 │   ├── ColonBullet.java
-│   ├── ObeliskSentinel.java / ProjectionPortal.java
+│   ├── DeathSignSentinel.java / ProjectionPortal.java / ProjectionShockwave.java
 │   ├── FlameButterfly.java
 │   └── RedLine.java / SpearBeam.java / GroundCrack.java    # 红线 / 投矛光束 / 地面裂隙
 ├── menu/
@@ -48,20 +48,39 @@ src/main/java/com/btmi/
 ├── network/
 │   ├── ModNetworking.java
 │   ├── ShakePayload.java / DashChargePayload.java
-│   ├── DashActionPayload.java / ObeliskActionPayload.java / ColonActionPayload.java
-│   ├── CrimsonFangPayload.java / FlameCapePayload.java
+│   ├── DashActionPayload.java / DeathSignActionPayload.java / ColonActionPayload.java
+│   ├── ScarletFangPayload.java / FlameCapePayload.java
 │   └── ExclamationPayload.java / DualWeaponPayload.java
 └── client/
     ├── ModClientSetup.java / ModKeyMappings.java / ClientShakeHandler.java
     ├── DashClientInput.java / DashClientAnimations.java / DashChargeHud.java
-    ├── ObeliskClientInput.java / ObeliskSentinelRenderer.java
+    ├── DashStaffRenderer.java / DashStaffItemRenderer.java
+    ├── DeathSignClientInput.java / DeathSignRenderer.java / DeathSignItemRenderer.java
+    ├── DeathSignSentinelRenderer.java
     ├── ColonClientInput.java / ColonRecoilHandler.java / ColonBulletRenderer.java
     ├── AmmoWheelHandler.java / AmmoWheelScreen.java / ColonScreen.java
-    ├── CrimsonFangClientInput.java / GunFirstPersonHandler.java
+    ├── ScarletFangClientInput.java / GunFirstPersonHandler.java
     ├── FlameCapeCloakRenderer.java / FlameCapeShape.java / FlameCapeClient.java
     ├── FlameButterflyRenderer.java
+    ├── LightOrbRenderer.java / ProjectionPortalRenderer.java / ProjectionShockwaveRenderer.java
     ├── RedLineRenderer.java / SpearBeamRenderer.java / GroundCrackRenderer.java
-    └── LaserBoltRenderer.java / LaserBeamRenderer.java / ProjectionPortalRenderer.java
+    └── LaserBoltRenderer.java / LaserBeamRenderer.java
+```
+
+资源目录按用途分组：
+
+```
+src/main/resources/
+├── assets/btmi/
+│   ├── lang/                    # 中英文语言文件
+│   ├── models/item/             # 物品模型与 3D 模型定义
+│   ├── textures/item/           # 物品图标
+│   ├── textures/entity/         # 3D 武器 / 特效贴图
+│   └── item_skins/              # Epic Fight 物品皮肤与第一人称设置
+└── data/btmi/
+    ├── capabilities/weapons/    # Epic Fight 武器能力与类型
+    ├── recipe/                  # 合成表
+    └── advancement/             # 进度
 ```
 
 ---

@@ -14,8 +14,8 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 
 @EventBusSubscriber(modid = BTMI.MODID, value = Dist.CLIENT)
 public final class ModKeyMappings {
-    public static final KeyMapping DETONATE_OBELISK = new KeyMapping(
-            "key.btmi.obelisk_detonate",
+    public static final KeyMapping DETONATE_DEATH_SIGN = new KeyMapping(
+            "key.btmi.death_sign_detonate",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_V,
@@ -47,7 +47,7 @@ public final class ModKeyMappings {
 
     @SubscribeEvent
     public static void register(RegisterKeyMappingsEvent event) {
-        event.register(DETONATE_OBELISK);
+        event.register(DETONATE_DEATH_SIGN);
         event.register(AMMO_WHEEL);
         event.register(WEAPON_SKILL);
         event.register(BUTTERFLY_STRIKE);

@@ -21,11 +21,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 
-public class ObeliskItem extends Item {
+public class DeathSignItem extends Item {
     public static final double ATTACK_DAMAGE = 6.0D;
     public static final double ATTACK_SPEED = -2.4D;
 
-    public ObeliskItem(Properties properties) {
+    public DeathSignItem(Properties properties) {
         super(properties);
     }
 
@@ -52,7 +52,7 @@ public class ObeliskItem extends Item {
             return InteractionResultHolder.pass(stack);
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            ObeliskHandler.toggleBoth(serverPlayer);
+            DeathSignHandler.toggleBoth(serverPlayer);
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
@@ -60,7 +60,7 @@ public class ObeliskItem extends Item {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker instanceof ServerPlayer serverPlayer) {
-            ObeliskHandler.markLit(serverPlayer);
+            DeathSignHandler.markLit(serverPlayer);
         }
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
         return true;
@@ -68,12 +68,12 @@ public class ObeliskItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip1").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip2").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip3").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk.tooltip4",
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign.tooltip1").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign.tooltip2").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign.tooltip3").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign.tooltip4",
                 Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk.lore")
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign.lore")
                 .withStyle(ChatFormatting.DARK_RED));
     }
 }

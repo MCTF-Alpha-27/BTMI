@@ -7,8 +7,8 @@ import java.util.UUID;
 import com.btmi.BTMI;
 import com.btmi.Config;
 import com.btmi.entity.LaserBolt;
-import com.btmi.entity.ObeliskSentinel;
-import com.btmi.network.ObeliskActionPayload;
+import com.btmi.entity.DeathSignSentinel;
+import com.btmi.network.DeathSignActionPayload;
 import com.btmi.network.ShakePayload;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -35,7 +35,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = BTMI.MODID)
-public final class ObeliskHandler {
+public final class DeathSignHandler {
     private static final double SEARCH_RADIUS = 160.0D;
 
     private static final int KNELL_WINDUP = 16;
@@ -49,7 +49,7 @@ public final class ObeliskHandler {
     private record Knell(Vec3 target, int age) {
     }
 
-    private ObeliskHandler() {
+    private DeathSignHandler() {
     }
 
     public static InteractionHand handOf(int hand) {
@@ -60,9 +60,9 @@ public final class ObeliskHandler {
     public static void toggleBoth(ServerPlayer player) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
-            if (stack.is(BTMI.OBELISK.get())) {
+            if (stack.is(BTMI.DEATH_SIGN.get())) {
                 deploy(player, hand);
-            } else if (stack.is(BTMI.OBELISK_RECALL.get())) {
+            } else if (stack.is(BTMI.DEATH_SIGN_RECALL.get())) {
                 recall(player, hand);
             }
         }
@@ -74,7 +74,7 @@ public final class ObeliskHandler {
 
     public static void deploy(ServerPlayer player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!stack.is(BTMI.OBELISK.get())) {
+        if (!stack.is(BTMI.DEATH_SIGN.get())) {
             return;
         }
         ServerLevel level = (ServerLevel) player.level();
@@ -82,9 +82,9 @@ public final class ObeliskHandler {
             return;
         }
 
-        ObeliskSentinel sentinel = new ObeliskSentinel(level, player, hand.ordinal());
+        DeathSignSentinel sentinel = new DeathSignSentinel(level, player, hand.ordinal());
         level.addFreshEntity(sentinel);
-        player.setItemInHand(hand, new ItemStack(BTMI.OBELISK_RECALL.get()));
+        player.setItemInHand(hand, new ItemStack(BTMI.DEATH_SIGN_RECALL.get()));
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 1.4F);
@@ -94,17 +94,17 @@ public final class ObeliskHandler {
 
     public static void recall(ServerPlayer player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!stack.is(BTMI.OBELISK_RECALL.get())) {
+        if (!stack.is(BTMI.DEATH_SIGN_RECALL.get())) {
             return;
         }
         ServerLevel level = (ServerLevel) player.level();
-        ObeliskSentinel sentinel = find(level, player, hand);
+        DeathSignSentinel sentinel = find(level, player, hand);
         if (sentinel != null) {
             level.sendParticles(ParticleTypes.ENCHANT, sentinel.getX(), sentinel.getY(), sentinel.getZ(),
                     30, 0.5D, 0.5D, 0.5D, 0.4D);
             sentinel.discard();
         }
-        player.setItemInHand(hand, new ItemStack(BTMI.OBELISK.get()));
+        player.setItemInHand(hand, new ItemStack(BTMI.DEATH_SIGN.get()));
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENDER_EYE_DEATH, SoundSource.PLAYERS, 1.0F, 1.2F);
@@ -113,14 +113,14 @@ public final class ObeliskHandler {
     public static void destroyRecallItem(ServerPlayer player, int hand) {
         InteractionHand interactionHand = handOf(hand);
         ItemStack stack = player.getItemInHand(interactionHand);
-        if (stack.is(BTMI.OBELISK_RECALL.get())) {
+        if (stack.is(BTMI.DEATH_SIGN_RECALL.get())) {
             player.setItemInHand(interactionHand, ItemStack.EMPTY);
         }
     }
 
-    public static ObeliskSentinel find(ServerLevel level, Player owner, InteractionHand hand) {
+    public static DeathSignSentinel find(ServerLevel level, Player owner, InteractionHand hand) {
         AABB area = owner.getBoundingBox().inflate(SEARCH_RADIUS);
-        for (ObeliskSentinel sentinel : level.getEntitiesOfClass(ObeliskSentinel.class, area)) {
+        for (DeathSignSentinel sentinel : level.getEntitiesOfClass(DeathSignSentinel.class, area)) {
             if (sentinel.isOwnedBy(owner) && sentinel.getOwnerHand() == hand.ordinal()) {
                 return sentinel;
             }
@@ -136,13 +136,13 @@ public final class ObeliskHandler {
         boolean changed = false;
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
-            if (stack.is(BTMI.OBELISK.get()) && !Boolean.TRUE.equals(stack.get(BTMI.LIT.get()))) {
+            if (stack.is(BTMI.DEATH_SIGN.get()) && !Boolean.TRUE.equals(stack.get(BTMI.LIT.get()))) {
                 stack.set(BTMI.LIT.get(), Boolean.TRUE);
                 changed = true;
             }
         }
         if (changed || !LIT_TICKS.containsKey(player.getUUID())) {
-            LIT_TICKS.put(player.getUUID(), Math.max(1, Config.OBELISK_SABER_TICKS.get()));
+            LIT_TICKS.put(player.getUUID(), Math.max(1, Config.DEATH_SIGN_SABER_TICKS.get()));
         }
     }
 
@@ -161,7 +161,7 @@ public final class ObeliskHandler {
     }
 
     private static void clearLit(ItemStack stack) {
-        if (stack.is(BTMI.OBELISK.get()) && Boolean.TRUE.equals(stack.get(BTMI.LIT.get()))) {
+        if (stack.is(BTMI.DEATH_SIGN.get()) && Boolean.TRUE.equals(stack.get(BTMI.LIT.get()))) {
             stack.set(BTMI.LIT.get(), Boolean.FALSE);
         }
     }
@@ -173,18 +173,23 @@ public final class ObeliskHandler {
     public static void fireLasers(ServerLevel level, ServerPlayer player) {
         Vec3 look = player.getLookAngle();
         for (InteractionHand hand : InteractionHand.values()) {
-            if (!player.getItemInHand(hand).is(BTMI.OBELISK_RECALL.get())) {
+            if (!player.getItemInHand(hand).is(BTMI.DEATH_SIGN_RECALL.get())) {
                 continue;
             }
-            ObeliskSentinel sentinel = find(level, player, hand);
+            DeathSignSentinel sentinel = find(level, player, hand);
             if (sentinel == null) {
                 continue;
             }
             LaserBolt bolt = new LaserBolt(level, player);
-            // 从十字架前端稍上方射出，避免激光看起来贴在自己身上
-            Vec3 muzzle = new Vec3(sentinel.getX(), sentinel.getY(), sentinel.getZ())
-                    .add(look.scale(0.7D))
-                    .add(0.0D, 0.4D, 0.0D);
+            Vec3 tip = look.normalize();
+            double yawRad = Math.toRadians(sentinel.getYRot());
+            Vec3 horizontal = new Vec3(Math.sin(yawRad), 0.0D, -Math.cos(yawRad));
+            Vec3 normal = horizontal.cross(new Vec3(0.0D, 1.0D, 0.0D));
+            Vec3 crossbar = normal.cross(tip);
+            Vec3 muzzle = sentinel.position()
+                    .add(0.0D, sentinel.getBbHeight() * 0.5D, 0.0D)
+                    .add(tip.scale(2.05D))
+                    .subtract(crossbar.scale(0.65D));
             bolt.setPos(muzzle.x, muzzle.y, muzzle.z);
             bolt.shoot(look.x, look.y, look.z, 2.6F, 0.0F);
             level.addFreshEntity(bolt);
@@ -201,20 +206,20 @@ public final class ObeliskHandler {
     public static void castKnell(ServerPlayer player) {
         ItemStack main = player.getMainHandItem();
         ItemStack off = player.getOffhandItem();
-        boolean holding = main.is(BTMI.OBELISK.get()) || main.is(BTMI.OBELISK_RECALL.get())
-                || off.is(BTMI.OBELISK.get()) || off.is(BTMI.OBELISK_RECALL.get());
+        boolean holding = main.is(BTMI.DEATH_SIGN.get()) || main.is(BTMI.DEATH_SIGN_RECALL.get())
+                || off.is(BTMI.DEATH_SIGN.get()) || off.is(BTMI.DEATH_SIGN_RECALL.get());
         if (!holding) {
             return;
         }
-        if (player.getCooldowns().isOnCooldown(BTMI.OBELISK.get())
-                || player.getCooldowns().isOnCooldown(BTMI.OBELISK_RECALL.get())
+        if (player.getCooldowns().isOnCooldown(BTMI.DEATH_SIGN.get())
+                || player.getCooldowns().isOnCooldown(BTMI.DEATH_SIGN_RECALL.get())
                 || KNELLS.containsKey(player.getUUID())) {
             return;
         }
 
-        int cooldown = Config.OBELISK_KNELL_COOLDOWN.get();
-        player.getCooldowns().addCooldown(BTMI.OBELISK.get(), cooldown);
-        player.getCooldowns().addCooldown(BTMI.OBELISK_RECALL.get(), cooldown);
+        int cooldown = Config.DEATH_SIGN_KNELL_COOLDOWN.get();
+        player.getCooldowns().addCooldown(BTMI.DEATH_SIGN.get(), cooldown);
+        player.getCooldowns().addCooldown(BTMI.DEATH_SIGN_RECALL.get(), cooldown);
 
         ServerLevel level = (ServerLevel) player.level();
         KNELLS.put(player.getUUID(), new Knell(knellTarget(player, level), 0));
@@ -314,8 +319,8 @@ public final class ObeliskHandler {
     }
 
     private static void strikeKnell(ServerLevel level, ServerPlayer player, Vec3 target) {
-        double radius = Config.OBELISK_KNELL_RADIUS.get();
-        double armLength = Config.OBELISK_KNELL_ARM_LENGTH.get();
+        double radius = Config.DEATH_SIGN_KNELL_RADIUS.get();
+        double armLength = Config.DEATH_SIGN_KNELL_ARM_LENGTH.get();
 
         // 贯穿天地的光柱
         for (double y = 0.0D; y <= 20.0D; y += 0.3D) {
@@ -413,8 +418,8 @@ public final class ObeliskHandler {
             }
 
             float damage = (center
-                    ? Config.OBELISK_KNELL_DAMAGE.get()
-                    : Config.OBELISK_KNELL_ARM_DAMAGE.get()).floatValue();
+                    ? Config.DEATH_SIGN_KNELL_DAMAGE.get()
+                    : Config.DEATH_SIGN_KNELL_ARM_DAMAGE.get()).floatValue();
             entity.invulnerableTime = 0;
             entity.hurt(level.damageSources().indirectMagic(player, player), damage);
             entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, KNELL_MARK_TICKS, 0, false, false));
@@ -438,9 +443,9 @@ public final class ObeliskHandler {
         return true;
     }
 
-    public static boolean holdsObeliskLaser(Player player) {
-        return player.getMainHandItem().is(BTMI.OBELISK_RECALL.get())
-                || player.getOffhandItem().is(BTMI.OBELISK_RECALL.get());
+    public static boolean holdsDeathSignLaser(Player player) {
+        return player.getMainHandItem().is(BTMI.DEATH_SIGN_RECALL.get())
+                || player.getOffhandItem().is(BTMI.DEATH_SIGN_RECALL.get());
     }
 
     // ------------------------------------------------------------------
@@ -450,26 +455,26 @@ public final class ObeliskHandler {
     public static void handleAction(ServerPlayer player, int hand, int action) {
         ServerLevel level = (ServerLevel) player.level();
 
-        if (action == ObeliskActionPayload.ACTION_KNELL) {
+        if (action == DeathSignActionPayload.ACTION_KNELL) {
             castKnell(player);
             return;
         }
 
-        if (action == ObeliskActionPayload.ACTION_ATTACK) {
+        if (action == DeathSignActionPayload.ACTION_ATTACK) {
             markLit(player);
         }
 
         for (InteractionHand interactionHand : InteractionHand.values()) {
-            if (!player.getItemInHand(interactionHand).is(BTMI.OBELISK_RECALL.get())) {
+            if (!player.getItemInHand(interactionHand).is(BTMI.DEATH_SIGN_RECALL.get())) {
                 continue;
             }
-            ObeliskSentinel sentinel = find(level, player, interactionHand);
+            DeathSignSentinel sentinel = find(level, player, interactionHand);
             if (sentinel == null) {
                 continue;
             }
-            if (action == ObeliskActionPayload.ACTION_ATTACK) {
+            if (action == DeathSignActionPayload.ACTION_ATTACK) {
                 sentinel.startRam(player.getLookAngle());
-            } else if (action == ObeliskActionPayload.ACTION_DETONATE) {
+            } else if (action == DeathSignActionPayload.ACTION_DETONATE) {
                 sentinel.startDetonate(player.getLookAngle());
                 // 发射即消耗：即使之后什么都没撞到，武器也应立刻消失
                 destroyRecallItem(player, interactionHand.ordinal());

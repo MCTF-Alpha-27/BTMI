@@ -18,13 +18,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 
-public class CrimsonFangItem extends Item {
+public class ScarletFangItem extends Item {
     public static final int MODE_BURST = 0;
     public static final int MODE_LASER = 1;
     public static final int MODE_SHOTGUN = 2;
     public static final int MODE_COUNT = 3;
 
-    public CrimsonFangItem(Properties properties) {
+    public ScarletFangItem(Properties properties) {
         super(properties);
     }
 
@@ -54,19 +54,19 @@ public class CrimsonFangItem extends Item {
         if (hand != InteractionHand.MAIN_HAND || level.isClientSide) {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
-        CrimsonFangHandler.cycleMode(player, stack);
+        ScarletFangHandler.cycleMode(player, stack);
         return InteractionResultHolder.sidedSuccess(stack, false);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.btmi.crimson_fang.tooltip1").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("item.btmi.crimson_fang.tooltip2",
+        tooltip.add(Component.translatable("item.btmi.scarlet_fang.tooltip1").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.btmi.scarlet_fang.tooltip2",
                 Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
-        tooltip.add(Component.translatable("item.btmi.crimson_fang.tooltip3").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("item.btmi.crimson_fang.mode",
-                Component.translatable(CrimsonFangHandler.modeName(mode(stack)))).withStyle(ChatFormatting.DARK_RED));
-        tooltip.add(Component.translatable("item.btmi.crimson_fang.lore")
+        tooltip.add(Component.translatable("item.btmi.scarlet_fang.tooltip3").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.btmi.scarlet_fang.mode",
+                Component.translatable(ScarletFangHandler.modeName(mode(stack)))).withStyle(ChatFormatting.DARK_RED));
+        tooltip.add(Component.translatable("item.btmi.scarlet_fang.lore")
                 .withStyle(ChatFormatting.DARK_RED));
     }
 }

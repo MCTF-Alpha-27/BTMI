@@ -11,20 +11,20 @@ import com.btmi.entity.GroundCrack;
 import com.btmi.entity.LaserBeam;
 import com.btmi.entity.LaserBolt;
 import com.btmi.entity.LightOrb;
-import com.btmi.entity.ObeliskSentinel;
+import com.btmi.entity.DeathSignSentinel;
 import com.btmi.entity.ProjectionPortal;
 import com.btmi.entity.ProjectionShockwave;
 import com.btmi.entity.RedLine;
 import com.btmi.entity.SpearBeam;
 import com.btmi.item.BulletItem;
 import com.btmi.item.ColonItem;
-import com.btmi.item.CrimsonFangItem;
+import com.btmi.item.ScarletFangItem;
 import com.btmi.item.DashItem;
 import com.btmi.item.EqualSignItem;
 import com.btmi.item.ExclamationMarkItem;
 import com.btmi.item.FlameCapeItem;
-import com.btmi.item.ObeliskItem;
-import com.btmi.item.ObeliskRecallItem;
+import com.btmi.item.DeathSignItem;
+import com.btmi.item.DeathSignRecallItem;
 import com.btmi.item.SlashItem;
 import com.btmi.menu.ColonMenu;
 import com.btmi.weapon.ModWeaponTypes;
@@ -103,9 +103,9 @@ public class BTMI {
     // 猩红之牙
     // ------------------------------------------------------------------
 
-    public static final DeferredItem<CrimsonFangItem> CRIMSON_FANG = ITEMS.register("crimson_fang",
-            () -> new CrimsonFangItem(new Item.Properties()
-                    .attributes(CrimsonFangItem.createWeaponAttributes())
+    public static final DeferredItem<ScarletFangItem> SCARLET_FANG = ITEMS.register("scarlet_fang",
+            () -> new ScarletFangItem(new Item.Properties()
+                    .attributes(ScarletFangItem.createWeaponAttributes())
                     .durability(2000)
                     .rarity(Rarity.EPIC)
                     .fireResistant()
@@ -179,17 +179,17 @@ public class BTMI {
     // 武器三：示亡号
     // ------------------------------------------------------------------
 
-    public static final DeferredItem<ObeliskItem> OBELISK = ITEMS.register("obelisk",
-            () -> new ObeliskItem(new Item.Properties()
-                    .attributes(ObeliskItem.createWeaponAttributes())
+    public static final DeferredItem<DeathSignItem> DEATH_SIGN = ITEMS.register("death_sign",
+            () -> new DeathSignItem(new Item.Properties()
+                    .attributes(DeathSignItem.createWeaponAttributes())
                     .durability(1800)
                     .rarity(Rarity.EPIC)
                     .fireResistant()
                     .stacksTo(1)));
 
-    public static final DeferredItem<ObeliskRecallItem> OBELISK_RECALL = ITEMS.register("obelisk_recall",
-            () -> new ObeliskRecallItem(new Item.Properties()
-                    .attributes(ObeliskItem.createWeaponAttributes())
+    public static final DeferredItem<DeathSignRecallItem> DEATH_SIGN_RECALL = ITEMS.register("death_sign_recall",
+            () -> new DeathSignRecallItem(new Item.Properties()
+                    .attributes(DeathSignItem.createWeaponAttributes())
                     .durability(1800)
                     .rarity(Rarity.EPIC)
                     .fireResistant()
@@ -218,7 +218,7 @@ public class BTMI {
 
     public static final DeferredItem<ColonItem> COLON = ITEMS.register("colon",
             () -> new ColonItem(new Item.Properties()
-                    .attributes(ObeliskItem.createWeaponAttributes())
+                    .attributes(DeathSignItem.createWeaponAttributes())
                     .durability(1200)
                     .rarity(Rarity.EPIC)
                     .stacksTo(1)));
@@ -270,13 +270,13 @@ public class BTMI {
                     .updateInterval(2)
                     .build("light_orb"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<ObeliskSentinel>> OBELISK_SENTINEL = ENTITY_TYPES.register(
-            "obelisk_sentinel",
-            () -> EntityType.Builder.<ObeliskSentinel>of(ObeliskSentinel::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<DeathSignSentinel>> DEATH_SIGN_SENTINEL = ENTITY_TYPES.register(
+            "death_sign_sentinel",
+            () -> EntityType.Builder.<DeathSignSentinel>of(DeathSignSentinel::new, MobCategory.MISC)
                     .sized(0.6F, 0.6F)
                     .clientTrackingRange(10)
                     .updateInterval(1)
-                    .build("obelisk_sentinel"));
+                    .build("death_sign_sentinel"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LaserBolt>> LASER_BOLT_ENTITY = ENTITY_TYPES.register(
             "laser_bolt",
@@ -348,9 +348,9 @@ public class BTMI {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.btmi"))
                     .withTabsBefore(CreativeModeTabs.COMBAT)
-                    .icon(() -> CRIMSON_FANG.get().getDefaultInstance())
+                    .icon(() -> SCARLET_FANG.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
-                        output.accept(CRIMSON_FANG.get());
+                        output.accept(SCARLET_FANG.get());
                         output.accept(FLAME_CAPE.get());
                         output.accept(BLACK_STEEL_INGOT.get());
                         output.accept(CRIMSON_ALLOY.get());
@@ -359,7 +359,7 @@ public class BTMI {
                         output.accept(DASH.get());
                         output.accept(EQUAL_SIGN.get());
                         output.accept(SLASH.get());
-                        output.accept(OBELISK.get());
+                        output.accept(DEATH_SIGN.get());
                         output.accept(COLON.get());
                         BULLET_ITEMS.forEach(bullet -> output.accept(bullet.get()));
                     })

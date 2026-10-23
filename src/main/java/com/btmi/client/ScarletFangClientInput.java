@@ -1,7 +1,7 @@
 package com.btmi.client;
 
 import com.btmi.BTMI;
-import com.btmi.network.CrimsonFangPayload;
+import com.btmi.network.ScarletFangPayload;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -13,8 +13,8 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = BTMI.MODID, value = Dist.CLIENT)
-public final class CrimsonFangClientInput {
-    private CrimsonFangClientInput() {
+public final class ScarletFangClientInput {
+    private ScarletFangClientInput() {
     }
 
     @SubscribeEvent
@@ -22,13 +22,13 @@ public final class CrimsonFangClientInput {
         if (minecraft.player == null || minecraft.level == null || minecraft.screen != null) {
             return;
         }
-        if (!minecraft.player.getMainHandItem().is(BTMI.CRIMSON_FANG.get())) {
+        if (!minecraft.player.getMainHandItem().is(BTMI.SCARLET_FANG.get())) {
             return;
         }
         boolean attackDown = minecraft.options.keyAttack.isDown() || minecraft.mouseHandler.isLeftPressed();
         if (attackDown) {
-            PacketDistributor.sendToServer(new CrimsonFangPayload(CrimsonFangPayload.ACTION_FIRE));
-            if (!minecraft.player.getCooldowns().isOnCooldown(BTMI.CRIMSON_FANG.get())) {
+            PacketDistributor.sendToServer(new ScarletFangPayload(ScarletFangPayload.ACTION_FIRE));
+            if (!minecraft.player.getCooldowns().isOnCooldown(BTMI.SCARLET_FANG.get())) {
                 GunFirstPersonHandler.kick();
             }
         }
@@ -41,7 +41,7 @@ public final class CrimsonFangClientInput {
             return;
         }
         Player player = Minecraft.getInstance().player;
-        if (player != null && player.getMainHandItem().is(BTMI.CRIMSON_FANG.get())) {
+        if (player != null && player.getMainHandItem().is(BTMI.SCARLET_FANG.get())) {
             event.setCanceled(true);
             event.setSwingHand(false);
         }

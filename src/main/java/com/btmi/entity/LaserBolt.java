@@ -2,7 +2,7 @@ package com.btmi.entity;
 
 import com.btmi.BTMI;
 import com.btmi.Config;
-import com.btmi.item.ObeliskHandler;
+import com.btmi.item.DeathSignHandler;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -56,10 +56,10 @@ public class LaserBolt extends ThrowableItemProjectile {
         super.onHitEntity(result);
         Entity target = result.getEntity();
         Entity owner = this.getOwner();
-        float damage = Config.OBELISK_LASER_DAMAGE.get().floatValue();
+        float damage = Config.DEATH_SIGN_LASER_DAMAGE.get().floatValue();
         if (target instanceof LivingEntity living && owner instanceof ServerPlayer serverPlayer
-                && ObeliskHandler.isJudged(living) && ObeliskHandler.holdsObeliskLaser(serverPlayer)) {
-            damage *= 1.0F + Config.OBELISK_KNELL_MARK_BONUS.get().floatValue();
+                && DeathSignHandler.isJudged(living) && DeathSignHandler.holdsDeathSignLaser(serverPlayer)) {
+            damage *= 1.0F + Config.DEATH_SIGN_KNELL_MARK_BONUS.get().floatValue();
         }
         target.hurt(this.damageSources().thrown(this, owner), damage);
         if (owner instanceof LivingEntity livingOwner) {

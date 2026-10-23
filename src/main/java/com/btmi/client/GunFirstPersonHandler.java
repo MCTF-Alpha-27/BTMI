@@ -49,7 +49,7 @@ public final class GunFirstPersonHandler {
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
-        if (!event.getItemStack().is(BTMI.CRIMSON_FANG.get())) {
+        if (!event.getItemStack().is(BTMI.SCARLET_FANG.get())) {
             return;
         }
         AbstractClientPlayer player = Minecraft.getInstance().player;

@@ -37,7 +37,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 
 @EventBusSubscriber(modid = BTMI.MODID)
-public final class CrimsonFangHandler {
+public final class ScarletFangHandler {
     private static final int BURST_COOLDOWN = 4;
     private static final int LASER_COOLDOWN = 14;
     private static final int SHOTGUN_COOLDOWN = 18;
@@ -64,23 +64,23 @@ public final class CrimsonFangHandler {
     /** 正在转圈放能量环的玩家 -> 已经过的 tick */
     private static final Map<UUID, Integer> RINGS = new HashMap<>();
 
-    private CrimsonFangHandler() {
+    private ScarletFangHandler() {
     }
 
     public static String modeName(int mode) {
         return switch (mode) {
-            case CrimsonFangItem.MODE_LASER -> "item.btmi.crimson_fang.mode.laser";
-            case CrimsonFangItem.MODE_SHOTGUN -> "item.btmi.crimson_fang.mode.shotgun";
-            default -> "item.btmi.crimson_fang.mode.burst";
+            case ScarletFangItem.MODE_LASER -> "item.btmi.scarlet_fang.mode.laser";
+            case ScarletFangItem.MODE_SHOTGUN -> "item.btmi.scarlet_fang.mode.shotgun";
+            default -> "item.btmi.scarlet_fang.mode.burst";
         };
     }
 
     public static void cycleMode(Player player, ItemStack stack) {
-        int next = (CrimsonFangItem.mode(stack) + 1) % CrimsonFangItem.MODE_COUNT;
-        CrimsonFangItem.setMode(stack, next);
+        int next = (ScarletFangItem.mode(stack) + 1) % ScarletFangItem.MODE_COUNT;
+        ScarletFangItem.setMode(stack, next);
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.displayClientMessage(
-                    Component.translatable("item.btmi.crimson_fang.mode", Component.translatable(modeName(next))), true);
+                    Component.translatable("item.btmi.scarlet_fang.mode", Component.translatable(modeName(next))), true);
             serverPlayer.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.7F, 1.6F);
         }
@@ -88,14 +88,14 @@ public final class CrimsonFangHandler {
 
     public static void fire(ServerPlayer player) {
         ItemStack gun = player.getMainHandItem();
-        if (!gun.is(BTMI.CRIMSON_FANG.get())) {
+        if (!gun.is(BTMI.SCARLET_FANG.get())) {
             return;
         }
 
-        int mode = CrimsonFangItem.mode(gun);
+        int mode = ScarletFangItem.mode(gun);
         int cooldown = switch (mode) {
-            case CrimsonFangItem.MODE_LASER -> LASER_COOLDOWN;
-            case CrimsonFangItem.MODE_SHOTGUN -> SHOTGUN_COOLDOWN;
+            case ScarletFangItem.MODE_LASER -> LASER_COOLDOWN;
+            case ScarletFangItem.MODE_SHOTGUN -> SHOTGUN_COOLDOWN;
             default -> BURST_COOLDOWN;
         };
         if (player.getCooldowns().isOnCooldown(gun.getItem())) {
@@ -108,8 +108,8 @@ public final class CrimsonFangHandler {
         Vec3 muzzle = muzzle(player, look);
 
         switch (mode) {
-            case CrimsonFangItem.MODE_LASER -> fireLaser(level, player, muzzle.add(0.0D, -LASER_EXTRA_DROP, 0.0D), look);
-            case CrimsonFangItem.MODE_SHOTGUN -> fireShotgun(level, player, muzzle, look);
+            case ScarletFangItem.MODE_LASER -> fireLaser(level, player, muzzle.add(0.0D, -LASER_EXTRA_DROP, 0.0D), look);
+            case ScarletFangItem.MODE_SHOTGUN -> fireShotgun(level, player, muzzle, look);
             default -> fireBurst(level, player, muzzle, look);
         }
         gun.hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
@@ -294,7 +294,7 @@ public final class CrimsonFangHandler {
     // ------------------------------------------------------------------
 
     public static void triggerRing(ServerPlayer player) {
-        if (!player.getMainHandItem().is(BTMI.CRIMSON_FANG.get())) {
+        if (!player.getMainHandItem().is(BTMI.SCARLET_FANG.get())) {
             return;
         }
         UUID id = player.getUUID();

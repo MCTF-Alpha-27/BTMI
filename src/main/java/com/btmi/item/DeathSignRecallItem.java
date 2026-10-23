@@ -18,8 +18,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
-public class ObeliskRecallItem extends Item {
-    public ObeliskRecallItem(Properties properties) {
+public class DeathSignRecallItem extends Item {
+    public DeathSignRecallItem(Properties properties) {
         super(properties);
     }
 
@@ -45,7 +45,7 @@ public class ObeliskRecallItem extends Item {
         // 潜行右键：召回悬浮实体（双手一并处理）
         if (player.isShiftKeyDown()) {
             if (player instanceof ServerPlayer serverPlayer) {
-                ObeliskHandler.toggleBoth(serverPlayer);
+                DeathSignHandler.toggleBoth(serverPlayer);
             }
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
         }
@@ -61,21 +61,21 @@ public class ObeliskRecallItem extends Item {
             return;
         }
         int used = getUseDuration(stack, livingEntity) - remainingUseDuration;
-        int interval = Math.max(1, Config.OBELISK_LASER_INTERVAL.get());
+        int interval = Math.max(1, Config.DEATH_SIGN_LASER_INTERVAL.get());
         if (used > 0 && used % interval == 0) {
-            ObeliskHandler.fireLasers(serverLevel, player);
+            DeathSignHandler.fireLasers(serverLevel, player);
         }
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.tooltip1").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.tooltip2").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.tooltip3",
-                Component.keybind("key.btmi.obelisk_detonate")).withStyle(ChatFormatting.GOLD));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.tooltip4",
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign_recall.tooltip1").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign_recall.tooltip2").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign_recall.tooltip3",
+                Component.keybind("key.btmi.death_sign_detonate")).withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign_recall.tooltip4",
                 Component.keybind("key.btmi.weapon_skill")).withStyle(ChatFormatting.GOLD));
-        tooltipComponents.add(Component.translatable("item.btmi.obelisk_recall.lore")
+        tooltipComponents.add(Component.translatable("item.btmi.death_sign_recall.lore")
                 .withStyle(ChatFormatting.DARK_RED));
     }
 }

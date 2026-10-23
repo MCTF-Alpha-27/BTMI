@@ -26,7 +26,7 @@ public final class ModClientSetup {
         // 光球
         event.registerEntityRenderer(BTMI.LIGHT_ORB_ENTITY.get(), LightOrbRenderer::new);
         // 示亡号的悬浮实体
-        event.registerEntityRenderer(BTMI.OBELISK_SENTINEL.get(), ObeliskSentinelRenderer::new);
+        event.registerEntityRenderer(BTMI.DEATH_SIGN_SENTINEL.get(), DeathSignSentinelRenderer::new);
         // 激光弹
         event.registerEntityRenderer(BTMI.LASER_BOLT_ENTITY.get(), LaserBoltRenderer::new);
         event.registerEntityRenderer(BTMI.LASER_BEAM.get(), LaserBeamRenderer::new);
@@ -48,7 +48,7 @@ public final class ModClientSetup {
 
     @SubscribeEvent
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        IClientItemExtensions extensions = new IClientItemExtensions() {
+        IClientItemExtensions dashExtensions = new IClientItemExtensions() {
             private DashStaffRenderer renderer;
 
             @Override
@@ -61,7 +61,21 @@ public final class ModClientSetup {
                 return this.renderer;
             }
         };
-        event.registerItem(extensions, BTMI.DASH.get());
+        IClientItemExtensions deathSignExtensions = new IClientItemExtensions() {
+            private DeathSignRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    Minecraft minecraft = Minecraft.getInstance();
+                    this.renderer = new DeathSignRenderer(
+                            minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+                }
+                return this.renderer;
+            }
+        };
+        event.registerItem(dashExtensions, BTMI.DASH.get());
+        event.registerItem(deathSignExtensions, BTMI.DEATH_SIGN.get());
     }
 
     @SuppressWarnings("deprecation")
@@ -73,7 +87,7 @@ public final class ModClientSetup {
                     ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "unsheathed"),
                     (stack, level, entity, seed) -> Boolean.TRUE.equals(stack.get(BTMI.UNSHEATHED.get())) ? 1.0F : 0.0F);
             ItemProperties.register(
-                    BTMI.OBELISK.get(),
+                    BTMI.DEATH_SIGN.get(),
                     ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "lit"),
                     (stack, level, entity, seed) -> Boolean.TRUE.equals(stack.get(BTMI.LIT.get())) ? 1.0F : 0.0F);
         });

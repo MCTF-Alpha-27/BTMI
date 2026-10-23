@@ -1,6 +1,7 @@
 package com.btmi;
 
 import com.btmi.client.DashStaffItemRenderer;
+import com.btmi.client.DeathSignItemRenderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -24,10 +25,14 @@ public class BTMIClient {
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        EpicFightClientEventHooks.Registry.PATCHED_ITEM.registerEvent(registered ->
-                registered.addItemRenderer(
-                        ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "dash"),
-                        DashStaffItemRenderer::new));
+        EpicFightClientEventHooks.Registry.PATCHED_ITEM.registerEvent(registered -> {
+            registered.addItemRenderer(
+                    ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "dash"),
+                    DashStaffItemRenderer::new);
+            registered.addItemRenderer(
+                    ResourceLocation.fromNamespaceAndPath(BTMI.MODID, "death_sign"),
+                    DeathSignItemRenderer::new);
+        });
         BTMI.LOGGER.info("BTMI 客户端初始化完成，你好 {}！", Minecraft.getInstance().getUser().getName());
     }
 }
