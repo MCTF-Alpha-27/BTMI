@@ -172,26 +172,37 @@ public final class DeathSignHandler {
 
     public static void fireLasers(ServerLevel level, ServerPlayer player) {
         Vec3 look = player.getLookAngle();
-        for (InteractionHand hand : InteractionHand.values()) {
-            if (!player.getItemInHand(hand).is(BTMI.DEATH_SIGN_RECALL.get())) {
+        AABB area = player.getBoundingBox().inflate(SEARCH_RADIUS);
+        for (DeathSignSentinel sentinel : level.getEntitiesOfClass(DeathSignSentinel.class, area)) {
+            if (!sentinel.isOwnedBy(player)) {
                 continue;
             }
-            DeathSignSentinel sentinel = find(level, player, hand);
-            if (sentinel == null) {
+            if (!player.getInventory().getItem(sentinel.getOwnerSlot()).is(BTMI.DEATH_SIGN_RECALL.get())) {
                 continue;
             }
             LaserBolt bolt = new LaserBolt(level, player);
+            Vec3 up = new Vec3(0.0D, 1.0D, 0.0D);
             Vec3 tip = look.normalize();
-            double yawRad = Math.toRadians(sentinel.getYRot());
-            Vec3 horizontal = new Vec3(Math.sin(yawRad), 0.0D, -Math.cos(yawRad));
-            Vec3 normal = horizontal.cross(new Vec3(0.0D, 1.0D, 0.0D));
+            Vec3 horizontal = new Vec3(tip.x, 0.0D, tip.z);
+            if (horizontal.lengthSqr() < 1.0E-6D) {
+                double yawRad = Math.toRadians(player.getYRot());
+                horizontal = new Vec3(-Math.sin(yawRad), 0.0D, Math.cos(yawRad));
+            } else {
+                horizontal = horizontal.normalize();
+            }
+            Vec3 normal = horizontal.cross(up);
             Vec3 crossbar = normal.cross(tip);
             Vec3 muzzle = sentinel.position()
                     .add(0.0D, sentinel.getBbHeight() * 0.5D, 0.0D)
                     .add(tip.scale(2.05D))
                     .subtract(crossbar.scale(0.65D));
+            if (sentinel.getOwnerHand() == 1) {
+                muzzle = muzzle.add(normal.scale(-1.10D))
+                        .add(tip.scale(0.2D))
+                        .subtract(crossbar.scale(0.10D));
+            }
             bolt.setPos(muzzle.x, muzzle.y, muzzle.z);
-            bolt.shoot(look.x, look.y, look.z, 2.6F, 0.0F);
+            bolt.shoot(tip.x, tip.y, tip.z, 2.6F, 0.0F);
             level.addFreshEntity(bolt);
 
             level.playSound(null, sentinel.getX(), sentinel.getY(), sentinel.getZ(),

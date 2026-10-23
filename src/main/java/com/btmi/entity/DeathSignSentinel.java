@@ -105,6 +105,10 @@ public class DeathSignSentinel extends Entity implements ItemSupplier {
         return this.ownerHand;
     }
 
+    public int getOwnerSlot() {
+        return this.ownerSlot;
+    }
+
     public float getTipPitch() {
         return this.entityData.get(TIP_PITCH);
     }
