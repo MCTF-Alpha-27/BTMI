@@ -73,12 +73,17 @@ src/main/java/com/btmi/
 src/main/resources/
 ├── assets/btmi/
 │   ├── lang/                    # 中英文语言文件
-│   ├── models/item/             # 物品模型与 3D 模型定义
-│   ├── textures/item/           # 物品图标
-│   ├── textures/entity/         # 3D 武器 / 特效贴图
+│   ├── models/item/             # 物品模型：2D 图标与 *_3d / *_3d_fp 手持模型
+│   ├── textures/item/           # 物品图标与 3D 模型贴图
+│   ├── textures/entity/         # 实体、技能特效与武器贴图
+│   ├── textures/models/armor/   # 烈焰蝶护甲贴图
+│   ├── animmodels/animations/biped/
+│   │   ├── combat/              # 冒号射击 / 等号断界 / 投矛等战斗动画
+│   │   └── living/              # 持枪待机 / 投矛瞄准等待机动画
 │   └── item_skins/              # Epic Fight 物品皮肤与第一人称设置
 └── data/btmi/
-    ├── capabilities/weapons/    # Epic Fight 武器能力与类型
+    ├── capabilities/weapons/    # Epic Fight 武器能力
+    │   └── types/               # 自定义武器类型：斜杠 / 等号 / 冒号 / 猩红之牙
     ├── recipe/                  # 合成表
     └── advancement/             # 进度
 ```

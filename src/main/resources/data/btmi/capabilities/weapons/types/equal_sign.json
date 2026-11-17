@@ -6,6 +6,14 @@
     "center": [0.0, 0.0, -0.75],
     "size": [0.5, 0.5, 1.6]
   },
+  "combos": {
+    "one_hand": [
+      "epicfight:biped/combat/axe_auto1",
+      "epicfight:biped/combat/axe_auto2",
+      "epicfight:biped/combat/axe_dash",
+      "epicfight:biped/combat/axe_airslash"
+    ]
+  },
   "styles": {
     "default": "one_hand",
     "cases": []

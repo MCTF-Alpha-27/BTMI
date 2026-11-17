@@ -1,43 +1,16 @@
 {
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "btmi:item/exclamation_mark"
-  },
-  "display": {
-    "ground": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 2, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "head": {
-      "rotation": [0, 180, 0],
-      "translation": [0, 13, 7],
-      "scale": [1, 1, 1]
-    },
-    "thirdperson_righthand": {
-      "rotation": [0, -90, 55],
-      "translation": [0, 4.0, 0.5],
-      "scale": [0.85, 0.85, 0.85]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [0, 90, -55],
-      "translation": [0, 4.0, 0.5],
-      "scale": [0.85, 0.85, 0.85]
-    },
-    "firstperson_righthand": {
-      "rotation": [0, -90, 25],
-      "translation": [1.13, 3.2, 1.13],
-      "scale": [0.68, 0.68, 0.68]
-    },
-    "firstperson_lefthand": {
-      "rotation": [0, 90, -25],
-      "translation": [1.13, 3.2, 1.13],
-      "scale": [0.68, 0.68, 0.68]
-    },
-    "fixed": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 0, 0],
-      "scale": [1, 1, 1]
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "item/generated",
+    "textures": {
+      "layer0": "btmi:item/exclamation_mark"
     }
+  },
+  "perspectives": {
+    "thirdperson_righthand": { "parent": "btmi:item/exclamation_mark_3d" },
+    "thirdperson_lefthand": { "parent": "btmi:item/exclamation_mark_3d" },
+    "firstperson_righthand": { "parent": "btmi:item/exclamation_mark_3d" },
+    "firstperson_lefthand": { "parent": "btmi:item/exclamation_mark_3d" }
   }
 }

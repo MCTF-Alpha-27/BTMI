@@ -6,6 +6,13 @@
     "center": [0.0, 0.0, -1.1],
     "size": [0.35, 0.35, 2.2]
   },
+  "combos": {
+    "one_hand": [
+      "epicfight:biped/combat/spear_onehand_auto",
+      "epicfight:biped/combat/spear_dash",
+      "epicfight:biped/combat/spear_onehand_airslash"
+    ]
+  },
   "styles": {
     "default": "one_hand",
     "cases": []
