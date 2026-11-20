@@ -8,8 +8,11 @@ import com.btmi.BTMI;
 import com.btmi.Config;
 import com.btmi.entity.LaserBolt;
 import com.btmi.entity.DeathSignSentinel;
+import com.btmi.entity.KnellCharge;
+import com.btmi.entity.KnellStrike;
 import com.btmi.network.DeathSignActionPayload;
 import com.btmi.network.ShakePayload;
+import com.btmi.weapon.ModAnimations;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -33,6 +36,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import yesman.epicfight.world.capabilities.EpicFightCapabilities;
+import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
 
 @EventBusSubscriber(modid = BTMI.MODID)
 public final class DeathSignHandler {
@@ -233,8 +239,15 @@ public final class DeathSignHandler {
         player.getCooldowns().addCooldown(BTMI.DEATH_SIGN_RECALL.get(), cooldown);
 
         ServerLevel level = (ServerLevel) player.level();
-        KNELLS.put(player.getUUID(), new Knell(knellTarget(player, level), 0));
+        Vec3 target = knellTarget(player, level);
+        KNELLS.put(player.getUUID(), new Knell(target, 0));
+        level.addFreshEntity(new KnellCharge(level, target));
         markLit(player);
+
+        ServerPlayerPatch patch = EpicFightCapabilities.getServerPlayerPatch(player);
+        if (patch != null) {
+            patch.playAnimationSynchronized(ModAnimations.DEATH_KNELL, 0.0F);
+        }
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 1.4F, 0.7F);
@@ -265,62 +278,6 @@ public final class DeathSignHandler {
         }
         KNELLS.put(player.getUUID(), new Knell(knell.target(), knell.age() + 1));
 
-        Vec3 target = knell.target();
-        float progress = knell.age() / (float) KNELL_WINDUP;
-        double angle = knell.age() * 0.42D;
-
-        // 脚下的双重法阵，内外圈反向旋转
-        for (int ring = 0; ring < 2; ring++) {
-            double ringRadius = 1.15D + ring * 0.6D;
-            int count = 14 + ring * 8;
-            double spin = ring == 0 ? angle : -angle * 0.8D;
-            for (int i = 0; i < count; i++) {
-                double a = spin + i * (Math.PI * 2.0D / count);
-                level.sendParticles(ring == 0 ? ParticleTypes.END_ROD : ParticleTypes.ENCHANT,
-                        player.getX() + Math.cos(a) * ringRadius,
-                        player.getY() + 0.1D,
-                        player.getZ() + Math.sin(a) * ringRadius,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D);
-            }
-        }
-
-        // 螺旋上升的光点
-        for (int i = 0; i < 12; i++) {
-            double a = angle * 1.8D + i * 0.62D;
-            double radius = 1.5D - i * 0.08D;
-            level.sendParticles(ParticleTypes.END_ROD,
-                    player.getX() + Math.cos(a) * radius,
-                    player.getY() + 0.25D + i * 0.18D,
-                    player.getZ() + Math.sin(a) * radius,
-                    1, 0.0D, 0.02D, 0.0D, 0.0D);
-        }
-
-        // 落点上空逐渐成形的光之十字
-        double height = target.y + 13.0D - progress * 2.5D;
-        int half = 2 + Mth.floor(progress * 3.0F);
-        for (int i = -half; i <= half; i++) {
-            double offset = i * 0.55D;
-            level.sendParticles(ParticleTypes.END_ROD, target.x + offset, height, target.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-            level.sendParticles(ParticleTypes.END_ROD, target.x, height + offset, target.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        }
-        level.sendParticles(ParticleTypes.END_ROD, target.x, height, target.z, 3, 0.15D, 0.15D, 0.15D, 0.03D);
-        level.sendParticles(ParticleTypes.FIREWORK, target.x, height, target.z, 1, 0.2D, 0.2D, 0.2D, 0.02D);
-
-        // 从上往下扫过的引导光
-        double scanY = target.y + 12.0D - progress * 10.0D;
-        for (int i = -2; i <= 2; i++) {
-            level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                    target.x + i * 0.5D, scanY, target.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        }
-
-        // 落点地面的预兆法阵
-        for (int i = 0; i < 16; i++) {
-            double a = i * (Math.PI * 2.0D / 16.0D) + angle * 0.3D;
-            level.sendParticles(ParticleTypes.ENCHANT,
-                    target.x + Math.cos(a) * 1.6D, target.y + 0.15D, target.z + Math.sin(a) * 1.6D,
-                    1, 0.0D, 0.03D, 0.0D, 0.0D);
-        }
-
         // 逐渐加速的钟声
         if (knell.age() == 4 || knell.age() == 8 || knell.age() == 12) {
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -333,69 +290,10 @@ public final class DeathSignHandler {
         double radius = Config.DEATH_SIGN_KNELL_RADIUS.get();
         double armLength = Config.DEATH_SIGN_KNELL_ARM_LENGTH.get();
 
-        // 贯穿天地的光柱
-        for (double y = 0.0D; y <= 20.0D; y += 0.3D) {
-            level.sendParticles(ParticleTypes.END_ROD, target.x, target.y + y, target.z,
-                    1, 0.06D, 0.0D, 0.06D, 0.0D);
-            if (y % 1.5D < 0.31D) {
-                level.sendParticles(ParticleTypes.FIREWORK, target.x, target.y + y, target.z,
-                        1, 0.18D, 0.18D, 0.18D, 0.02D);
-            }
-        }
-
-        // 四条双线光臂，臂端各立起一根小光柱
-        for (int direction = 0; direction < 4; direction++) {
-            double dx = direction == 0 ? 1.0D : direction == 1 ? -1.0D : 0.0D;
-            double dz = direction == 2 ? 1.0D : direction == 3 ? -1.0D : 0.0D;
-            double px = -dz;
-            double pz = dx;
-            for (double d = 0.4D; d <= radius + armLength; d += 0.45D) {
-                for (int side = -1; side <= 1; side += 2) {
-                    double x = target.x + dx * d + px * side * 0.45D;
-                    double z = target.z + dz * d + pz * side * 0.45D;
-                    level.sendParticles(ParticleTypes.END_ROD, x, target.y + 0.12D, z,
-                            1, 0.0D, 0.0D, 0.0D, 0.0D);
-                }
-                if (Math.round(d * 10.0D) % 4 == 0) {
-                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                            target.x + dx * d, target.y + 0.5D, target.z + dz * d,
-                            1, 0.04D, 0.12D, 0.04D, 0.02D);
-                }
-            }
-
-            double tipX = target.x + dx * (radius + armLength);
-            double tipZ = target.z + dz * (radius + armLength);
-            for (double y = 0.4D; y <= 5.0D; y += 0.35D) {
-                level.sendParticles(ParticleTypes.END_ROD, tipX, target.y + y, tipZ,
-                        1, 0.03D, 0.0D, 0.03D, 0.0D);
-            }
-            level.sendParticles(ParticleTypes.FLASH, tipX, target.y + 1.0D, tipZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        }
-
-        // 三层扩散冲击环
-        for (int ring = 0; ring < 3; ring++) {
-            double ringRadius = radius * 0.5D + ring * 2.2D;
-            int count = 28 + ring * 12;
-            for (int i = 0; i < count; i++) {
-                double a = i * (Math.PI * 2.0D / count);
-                double x = target.x + Math.cos(a) * ringRadius;
-                double z = target.z + Math.sin(a) * ringRadius;
-                level.sendParticles(ParticleTypes.SWEEP_ATTACK, x, target.y + 0.15D, z,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D);
-                if (ring == 0) {
-                    level.sendParticles(ParticleTypes.END_ROD, x, target.y + 0.3D, z,
-                            1, 0.0D, 0.0D, 0.0D, 0.0D);
-                }
-            }
-        }
-
-        // 圣光爆发
-        level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, target.x, target.y + 1.2D, target.z,
-                60, 1.2D, 1.2D, 1.2D, 0.35D);
-        level.sendParticles(ParticleTypes.END_ROD, target.x, target.y + 1.0D, target.z,
-                40, 1.5D, 1.5D, 1.5D, 0.25D);
-        level.sendParticles(ParticleTypes.FLASH, target.x, target.y + 0.5D, target.z, 2, 0.0D, 0.0D, 0.0D, 0.0D);
-        level.sendParticles(ParticleTypes.FLASH, target.x, target.y + 3.0D, target.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        level.addFreshEntity(new KnellStrike(level, target));
+        level.sendParticles(ParticleTypes.FLASH, target.x, target.y + 1.2D, target.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        level.sendParticles(ParticleTypes.END_ROD, target.x, target.y + 1.2D, target.z,
+                8, 0.6D, 1.0D, 0.6D, 0.06D);
 
         level.playSound(null, target.x, target.y, target.z,
                 SoundEvents.BELL_RESONATE, SoundSource.PLAYERS, 2.0F, 0.6F);

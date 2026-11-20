@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " F ",
+    " B ",
+    "F F"
+  ],
+  "key": {
+    "F": {
+      "item": "btmi:chairman_file"
+    },
+    "B": {
+      "item": "btmi:storyteller_book"
+    }
+  },
+  "result": {
+    "id": "btmi:digamma",
+    "count": 1
+  }
+}

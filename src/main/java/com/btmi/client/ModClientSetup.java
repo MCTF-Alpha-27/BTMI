@@ -38,12 +38,20 @@ public final class ModClientSetup {
         event.registerEntityRenderer(BTMI.FLAME_BUTTERFLY.get(), FlameButterflyRenderer::new);
         event.registerEntityRenderer(BTMI.COLON_BULLET.get(),
                 context -> new ColonBulletRenderer(context, 0.35F));
+        event.registerEntityRenderer(BTMI.BLOOD_RAIN_SHELL_ENTITY.get(),
+                context -> new ThrownItemRenderer<>(context, 1.0F, true));
+        event.registerEntityRenderer(BTMI.KNELL_CHARGE.get(), KnellChargeRenderer::new);
+        event.registerEntityRenderer(BTMI.KNELL_STRIKE.get(), KnellStrikeRenderer::new);
+        event.registerEntityRenderer(BTMI.BELL_TOWER_CLOCK.get(), BellTowerClockRenderer::new);
+        event.registerEntityRenderer(BTMI.BELL_TOLL_ENTITY.get(), BellTollRenderer::new);
     }
 
 
     @SubscribeEvent
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(BTMI.COLON_MENU.get(), ColonScreen::new);
+        event.register(BTMI.BLOOD_RAIN_MORTAR_MENU.get(), BloodRainScreen::new);
+        event.register(BTMI.TOWER_CORE_MENU.get(), TowerCoreScreen::new);
     }
 
     @SubscribeEvent

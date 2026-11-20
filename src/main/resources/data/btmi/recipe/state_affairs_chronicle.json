@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FFF",
+    "FCB",
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "item": "btmi:chairman_file"
+    },
+    "C": {
+      "item": "minecraft:clock"
+    },
+    "B": {
+      "item": "btmi:storyteller_book"
+    }
+  },
+  "result": {
+    "id": "btmi:state_affairs_chronicle",
+    "count": 1
+  }
+}

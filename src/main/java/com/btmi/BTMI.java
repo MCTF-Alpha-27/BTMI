@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
+import com.btmi.entity.BellToll;
 import com.btmi.entity.ColonBullet;
 import com.btmi.entity.FlameButterfly;
 import com.btmi.entity.GroundCrack;
@@ -12,12 +13,28 @@ import com.btmi.entity.LaserBeam;
 import com.btmi.entity.LaserBolt;
 import com.btmi.entity.LightOrb;
 import com.btmi.entity.DeathSignSentinel;
+import com.btmi.entity.KnellCharge;
+import com.btmi.entity.KnellStrike;
 import com.btmi.entity.ProjectionPortal;
 import com.btmi.entity.ProjectionShockwave;
 import com.btmi.entity.RedLine;
 import com.btmi.entity.SpearBeam;
+import com.btmi.block.BloodRainMortarBlock;
+import com.btmi.block.BloodRainMortarBlockEntity;
+import com.btmi.block.MessengerBoxBlock;
+import com.btmi.block.MessengerBoxBlockEntity;
+import com.btmi.block.TowerCoreBlock;
+import com.btmi.block.TowerCoreBlockEntity;
+import com.btmi.block.TowerCoreMenu;
+import com.btmi.belltower.BellTowerPermission;
+import com.btmi.entity.BellTowerClock;
+import com.btmi.entity.BloodRainShell;
+import com.btmi.item.BloodRainMortarItem;
+import com.btmi.item.BloodRainShellItem;
 import com.btmi.item.BulletItem;
+import com.btmi.item.ChairmanFileItem;
 import com.btmi.item.ColonItem;
+import com.btmi.item.FixedChairmanFileItem;
 import com.btmi.item.ScarletFangItem;
 import com.btmi.item.DashItem;
 import com.btmi.item.EqualSignItem;
@@ -26,12 +43,16 @@ import com.btmi.item.FlameCapeItem;
 import com.btmi.item.DeathSignItem;
 import com.btmi.item.DeathSignRecallItem;
 import com.btmi.item.SlashItem;
+import com.btmi.item.StateAffairsChronicleItem;
+import com.btmi.item.StorytellerBookItem;
+import com.btmi.menu.BloodRainMenu;
 import com.btmi.menu.ColonMenu;
 import com.btmi.weapon.ModWeaponTypes;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -39,8 +60,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -48,14 +71,21 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 @Mod(BTMI.MODID)
 public class BTMI {
@@ -67,6 +97,37 @@ public class BTMI {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, MODID);
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MODID);
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, MODID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+            DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BELL_TOWER =
+            ATTACHMENT_TYPES.register("bell_tower", BellTowerPermission::create);
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<String>> BELL_TOWER_ACTIVE =
+            ATTACHMENT_TYPES.register("bell_tower_active", () -> AttachmentType.builder(() -> "")
+                    .serialize(Codec.STRING)
+                    .copyOnDeath()
+                    .sync(ByteBufCodecs.STRING_UTF8)
+                    .build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<String>> BELL_TOWER_DISABLED_PASSIVES =
+            ATTACHMENT_TYPES.register("bell_tower_disabled_passives", () -> AttachmentType.builder(() -> "")
+                    .serialize(Codec.STRING)
+                    .copyOnDeath()
+                    .sync(ByteBufCodecs.STRING_UTF8)
+                    .build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<String>> BELL_TOWER_CLASS =
+            ATTACHMENT_TYPES.register("bell_tower_class", () -> AttachmentType.builder(() -> "none")
+                    .serialize(Codec.STRING)
+                    .copyOnDeath()
+                    .sync(ByteBufCodecs.STRING_UTF8)
+                    .build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<String>> BELL_TOWER_QUESTS =
+            ATTACHMENT_TYPES.register("bell_tower_quests", () -> AttachmentType.builder(() -> "")
+                    .serialize(Codec.STRING)
+                    .copyOnDeath()
+                    .sync(ByteBufCodecs.STRING_UTF8)
+                    .build());
 
     // ------------------------------------------------------------------
     // 武器一：感叹号
@@ -175,6 +236,60 @@ public class BTMI {
     public static final DeferredItem<Item> LIGHT_ORB = ITEMS.register("light_orb",
             () -> new Item(new Item.Properties()));
 
+    public static final DeferredItem<StorytellerBookItem> STORYTELLER_BOOK = ITEMS.register("storyteller_book",
+            () -> new StorytellerBookItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredBlock<MessengerBoxBlock> MESSENGER_BOX_BLOCK = BLOCKS.register("messenger_box",
+            () -> new MessengerBoxBlock(BlockBehaviour.Properties.of()
+                    .strength(3.5F, 6.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredItem<BlockItem> MESSENGER_BOX_ITEM = ITEMS.register("messenger_box",
+            () -> new BlockItem(MESSENGER_BOX_BLOCK.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MessengerBoxBlockEntity>> MESSENGER_BOX_BE =
+            BLOCK_ENTITY_TYPES.register("messenger_box",
+                    () -> BlockEntityType.Builder.of(MessengerBoxBlockEntity::new, MESSENGER_BOX_BLOCK.get()).build(null));
+
+    public static final DeferredBlock<TowerCoreBlock> TOWER_CORE = BLOCKS.register("tower_core",
+            () -> new TowerCoreBlock(BlockBehaviour.Properties.of()
+                    .strength(5.0F, 1200.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredItem<BlockItem> TOWER_CORE_ITEM = ITEMS.register("tower_core",
+            () -> new BlockItem(TOWER_CORE.get(), new Item.Properties().rarity(Rarity.EPIC)));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TowerCoreBlockEntity>> TOWER_CORE_BE =
+            BLOCK_ENTITY_TYPES.register("tower_core",
+                    () -> BlockEntityType.Builder.of(TowerCoreBlockEntity::new, TOWER_CORE.get()).build(null));
+    public static final DeferredHolder<MenuType<?>, MenuType<TowerCoreMenu>> TOWER_CORE_MENU = MENU_TYPES.register(
+            "tower_core",
+            () -> IMenuTypeExtension.create((windowId, inventory, data) -> {
+                BlockPos pos = data.readBlockPos();
+                if (inventory.player.level().getBlockEntity(pos) instanceof TowerCoreBlockEntity core) {
+                    return new TowerCoreMenu(windowId, inventory, pos, core);
+                }
+                return new TowerCoreMenu(windowId, inventory, pos, new SimpleContainer(1));
+            }));
+
+    public static final DeferredItem<ChairmanFileItem> CHAIRMAN_FILE_APPOINTMENT =
+            ITEMS.register("chairman_file_appointment",
+                    () -> new ChairmanFileItem("file_appointment",
+                            new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredItem<ChairmanFileItem> CHAIRMAN_FILE_RECORD =
+            ITEMS.register("chairman_file_record",
+                    () -> new ChairmanFileItem("file_record",
+                            new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredItem<ChairmanFileItem> CHAIRMAN_FILE_LAST =
+            ITEMS.register("chairman_file_last",
+                    () -> new ChairmanFileItem("file_last",
+                            new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredItem<FixedChairmanFileItem> CHAIRMAN_FILE =
+            ITEMS.register("chairman_file",
+                    () -> new FixedChairmanFileItem(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> DIGAMMA = ITEMS.register("digamma",
+            () -> new Item(new Item.Properties().durability(100).stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredItem<StateAffairsChronicleItem> STATE_AFFAIRS_CHRONICLE =
+            ITEMS.register("state_affairs_chronicle",
+                    () -> new StateAffairsChronicleItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+
     // ------------------------------------------------------------------
     // 武器三：示亡号
     // ------------------------------------------------------------------
@@ -257,6 +372,31 @@ public class BTMI {
     public static final DeferredHolder<MenuType<?>, MenuType<ColonMenu>> COLON_MENU = MENU_TYPES.register(
             "colon",
             () -> IMenuTypeExtension.create((windowId, inventory, data) -> new ColonMenu(windowId, inventory)));
+
+    // ------------------------------------------------------------------
+    // 武器九：血雨
+    // ------------------------------------------------------------------
+
+    public static final DeferredBlock<BloodRainMortarBlock> BLOOD_RAIN_MORTAR = BLOCKS.register("blood_rain_mortar",
+            () -> new BloodRainMortarBlock(BlockBehaviour.Properties.of()
+                    .strength(5.0F, 6.0F)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    public static final DeferredItem<BlockItem> BLOOD_RAIN_MORTAR_ITEM = ITEMS.register("blood_rain_mortar",
+            () -> new BloodRainMortarItem(BLOOD_RAIN_MORTAR.get(), new Item.Properties()));
+
+    public static final DeferredItem<BloodRainShellItem> BLOOD_RAIN_SHELL = ITEMS.register("blood_rain_shell",
+            () -> new BloodRainShellItem(new Item.Properties().stacksTo(16)));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodRainMortarBlockEntity>> BLOOD_RAIN_MORTAR_BE =
+            BLOCK_ENTITY_TYPES.register("blood_rain_mortar",
+                    () -> BlockEntityType.Builder.of(BloodRainMortarBlockEntity::new, BLOOD_RAIN_MORTAR.get()).build(null));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<BloodRainMenu>> BLOOD_RAIN_MORTAR_MENU = MENU_TYPES.register(
+            "blood_rain_mortar",
+            () -> IMenuTypeExtension.create((windowId, inventory, data) -> new BloodRainMenu(windowId, inventory, data.readBlockPos())));
 
     // ------------------------------------------------------------------
     // 实体
@@ -342,6 +482,41 @@ public class BTMI {
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("colon_bullet"));
+    public static final DeferredHolder<EntityType<?>, EntityType<BloodRainShell>> BLOOD_RAIN_SHELL_ENTITY = ENTITY_TYPES.register(
+            "blood_rain_shell",
+            () -> EntityType.Builder.<BloodRainShell>of(BloodRainShell::new, MobCategory.MISC)
+                    .sized(0.35F, 0.35F)
+                    .clientTrackingRange(8)
+                    .updateInterval(2)
+                    .build("blood_rain_shell"));
+    public static final DeferredHolder<EntityType<?>, EntityType<KnellCharge>> KNELL_CHARGE = ENTITY_TYPES.register(
+            "knell_charge",
+            () -> EntityType.Builder.<KnellCharge>of(KnellCharge::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(16)
+                    .updateInterval(2)
+                    .build("knell_charge"));
+    public static final DeferredHolder<EntityType<?>, EntityType<KnellStrike>> KNELL_STRIKE = ENTITY_TYPES.register(
+            "knell_strike",
+            () -> EntityType.Builder.<KnellStrike>of(KnellStrike::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(20)
+                    .updateInterval(1)
+                    .build("knell_strike"));
+    public static final DeferredHolder<EntityType<?>, EntityType<BellTowerClock>> BELL_TOWER_CLOCK = ENTITY_TYPES.register(
+            "bell_tower_clock",
+            () -> EntityType.Builder.<BellTowerClock>of(BellTowerClock::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(200)
+                    .updateInterval(2)
+                    .build("bell_tower_clock"));
+    public static final DeferredHolder<EntityType<?>, EntityType<BellToll>> BELL_TOLL_ENTITY = ENTITY_TYPES.register(
+            "bell_toll",
+            () -> EntityType.Builder.<BellToll>of(BellToll::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .clientTrackingRange(32)
+                    .updateInterval(1)
+                    .build("bell_toll"));
 
     // 本模组的创造模式物品栏，位置在原版战斗标签页之前
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register("main",
@@ -362,6 +537,14 @@ public class BTMI {
                         output.accept(DEATH_SIGN.get());
                         output.accept(COLON.get());
                         BULLET_ITEMS.forEach(bullet -> output.accept(bullet.get()));
+                        output.accept(BLOOD_RAIN_MORTAR_ITEM.get());
+                        output.accept(BLOOD_RAIN_SHELL.get());
+                        output.accept(STORYTELLER_BOOK.get());
+                        output.accept(MESSENGER_BOX_ITEM.get());
+                        output.accept(CHAIRMAN_FILE.get());
+                        output.accept(DIGAMMA.get());
+                        output.accept(STATE_AFFAIRS_CHRONICLE.get());
+                        output.accept(TOWER_CORE_ITEM.get());
                     })
                     .build());
 
@@ -372,6 +555,9 @@ public class BTMI {
         ARMOR_MATERIALS.register(modEventBus);
         DATA_COMPONENTS.register(modEventBus);
         MENU_TYPES.register(modEventBus);
+        BLOCKS.register(modEventBus);
+        BLOCK_ENTITY_TYPES.register(modEventBus);
+        ATTACHMENT_TYPES.register(modEventBus);
 
         ModWeaponTypes.register();
 

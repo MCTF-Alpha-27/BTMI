@@ -102,7 +102,6 @@ public final class DashClientInput {
                 GunFirstPersonHandler.startFan(Math.max(1, loaded) * 2 + 3);
             } else if (holdingDeathSign) {
                 PacketDistributor.sendToServer(new DeathSignActionPayload(0, DeathSignActionPayload.ACTION_KNELL));
-                DashClientAnimations.playPointGesture(minecraft.player);
             } else if (wearingCape) {
                 PacketDistributor.sendToServer(new FlameCapePayload(FlameCapePayload.ACTION_SUMMON));
             }

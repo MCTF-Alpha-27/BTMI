@@ -31,7 +31,17 @@ public final class ModNetworking {
         registrar.playToServer(FlameCapePayload.TYPE, FlameCapePayload.STREAM_CODEC, FlameCapePayload::handle);
         // 客户端 -> 服务端：示亡号的按键动作
         registrar.playToServer(DeathSignActionPayload.TYPE, DeathSignActionPayload.STREAM_CODEC, DeathSignActionPayload::handle);
+        // 服务端 -> 客户端：血雨天气
+        registrar.playToClient(BloodRainPayload.TYPE, BloodRainPayload.STREAM_CODEC, BloodRainPayload::handle);
         // 客户端 -> 服务端：冒号的发射与选弹
         registrar.playToServer(ColonActionPayload.TYPE, ColonActionPayload.STREAM_CODEC, ColonActionPayload::handle);
+        registrar.playToClient(BellTowerSkillStatePayload.TYPE, BellTowerSkillStatePayload.STREAM_CODEC,
+                BellTowerSkillStatePayload::handle);
+        registrar.playToServer(BellTowerSkillPayload.TYPE, BellTowerSkillPayload.STREAM_CODEC,
+                BellTowerSkillPayload::handle);
+        registrar.playToClient(BellTowerOverlayPayload.TYPE, BellTowerOverlayPayload.STREAM_CODEC,
+                BellTowerOverlayPayload::handle);
+        registrar.playToClient(ChronicleOpenPayload.TYPE, ChronicleOpenPayload.STREAM_CODEC,
+                ChronicleOpenPayload::handle);
     }
 }

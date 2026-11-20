@@ -23,6 +23,9 @@ public final class ModAnimations {
     public static AnimationManager.AnimationAccessor<StaticAnimation> DASH_SHOT;
     public static AnimationManager.AnimationAccessor<StaticAnimation> EQUAL_SLASH;
     public static AnimationManager.AnimationAccessor<StaticAnimation> SPEAR_CHARGE;
+    public static AnimationManager.AnimationAccessor<StaticAnimation> BELL_TOLL;
+    public static AnimationManager.AnimationAccessor<StaticAnimation> BLOOD_RUSH;
+    public static AnimationManager.AnimationAccessor<StaticAnimation> DEATH_KNELL;
 
     private ModAnimations() {
     }
@@ -52,5 +55,14 @@ public final class ModAnimations {
         // 删除线蓄力：举起长矛的循环姿态
         SPEAR_CHARGE = builder.nextAccessor("biped/combat/spear_charge",
                 (accessor) -> new StaticAnimation(true, accessor, Armatures.BIPED));
+        // 钟鸣：拉长前置蓄力的重击
+        BELL_TOLL = builder.nextAccessor("biped/combat/bell_toll",
+                (accessor) -> new StaticAnimation(false, accessor, Armatures.BIPED));
+        // 血影突进：短促下蹲后向前突刺
+        BLOOD_RUSH = builder.nextAccessor("biped/combat/blood_rush",
+                (accessor) -> new StaticAnimation(false, accessor, Armatures.BIPED));
+        // 示亡号丧钟：抬臂蓄势后砸下的重击
+        DEATH_KNELL = builder.nextAccessor("biped/combat/death_knell",
+                (accessor) -> new StaticAnimation(false, accessor, Armatures.BIPED));
     }
 }

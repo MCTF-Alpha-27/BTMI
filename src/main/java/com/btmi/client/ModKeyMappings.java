@@ -42,6 +42,20 @@ public final class ModKeyMappings {
             GLFW.GLFW_KEY_J,
             "key.categories.btmi");
 
+    public static final KeyMapping SKILL_MENU = new KeyMapping(
+            "key.btmi.skill_menu_alt",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_RIGHT_ALT,
+            "key.categories.btmi");
+
+    public static final KeyMapping SKILL_CAST = new KeyMapping(
+            "key.btmi.skill_cast_side",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.MOUSE,
+            GLFW.GLFW_MOUSE_BUTTON_6,
+            "key.categories.btmi");
+
     private ModKeyMappings() {
     }
 
@@ -51,5 +65,7 @@ public final class ModKeyMappings {
         event.register(AMMO_WHEEL);
         event.register(WEAPON_SKILL);
         event.register(BUTTERFLY_STRIKE);
+        event.register(SKILL_MENU);
+        event.register(SKILL_CAST);
     }
 }

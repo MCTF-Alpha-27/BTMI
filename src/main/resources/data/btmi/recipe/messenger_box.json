@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BBB",
+    "BCB",
+    "BEB"
+  ],
+  "key": {
+    "B": {
+      "item": "btmi:black_steel_ingot"
+    },
+    "C": {
+      "item": "minecraft:bell"
+    },
+    "E": {
+      "item": "btmi:energy_core"
+    }
+  },
+  "result": {
+    "id": "btmi:messenger_box",
+    "count": 1
+  }
+}

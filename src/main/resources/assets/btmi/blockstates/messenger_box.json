@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "btmi:block/messenger_box"
+    },
+    "facing=north,lit=true": {
+      "model": "btmi:block/messenger_box_lit"
+    },
+    "facing=south,lit=false": {
+      "model": "btmi:block/messenger_box"
+    },
+    "facing=south,lit=true": {
+      "model": "btmi:block/messenger_box_lit"
+    },
+    "facing=east,lit=false": {
+      "model": "btmi:block/messenger_box"
+    },
+    "facing=east,lit=true": {
+      "model": "btmi:block/messenger_box_lit"
+    },
+    "facing=west,lit=false": {
+      "model": "btmi:block/messenger_box"
+    },
+    "facing=west,lit=true": {
+      "model": "btmi:block/messenger_box_lit"
+    }
+  }
+}
